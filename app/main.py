@@ -78,6 +78,7 @@ async def ws_match(websocket: WebSocket):
     _join_fail_times: list[float] = []  # rate-limit: timestamps of failed join attempts
     _JOIN_MAX = 5
     _JOIN_WINDOW = 60  # seconds
+    _chat_times: list[float] = []  # rate-limit: chat messages per connection
     _room_create_times: list[float] = []  # rate-limit: timestamps of room creation
     _CREATE_MAX = 3
     _CREATE_WINDOW = 3600  # 1 hour
@@ -284,13 +285,11 @@ async def ws_match(websocket: WebSocket):
                 text = text.replace("<", "&lt;").replace(">", "&gt;")
                 # Rate limit: 3 messages per 5 seconds
                 now_ts = time.time()
-                if not hasattr(player, '_chat_times'):
-                    player._chat_times = []
-                player._chat_times = [t for t in player._chat_times if t > now_ts - 5]
-                if len(player._chat_times) >= 3:
+                _chat_times = [t for t in _chat_times if t > now_ts - 5]
+                if len(_chat_times) >= 3:
                     await websocket.send_text(json.dumps(error_msg("Chat rate limit — wait a moment")))
                     continue
-                player._chat_times.append(now_ts)
+                _chat_times.append(now_ts)
                 # Broadcast to room
                 room = manager.get_room(room_code)
                 if room:
