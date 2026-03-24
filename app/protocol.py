@@ -15,6 +15,7 @@ class ClientMessageType(str, Enum):
     UPLOAD_PHOTO = "upload_photo"
     READY = "ready"
     LEAVE = "leave"
+    SEND_CHAT = "send_chat"
 
 
 class ServerMessageType(str, Enum):
@@ -29,6 +30,7 @@ class ServerMessageType(str, Enum):
     COUNTDOWN = "countdown"
     REVEAL = "reveal"
     GROUP_REVEAL = "group_reveal"
+    CHAT_MESSAGE = "chat_message"
     ERROR = "error"
 
 

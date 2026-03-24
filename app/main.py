@@ -269,6 +269,41 @@ async def ws_match(websocket: WebSocket):
                 room_code = None
                 player = None
 
+            # --- CHAT ---
+            elif msg_type == ClientMessageType.SEND_CHAT.value:
+                if not room_code or not player:
+                    await websocket.send_text(json.dumps(error_msg("Not in a room")))
+                    continue
+                text = (data.get("text") or "").strip()
+                if not text:
+                    continue
+                # Enforce max length
+                if len(text) > 200:
+                    text = text[:200]
+                # Strip HTML for XSS prevention
+                text = text.replace("<", "&lt;").replace(">", "&gt;")
+                # Rate limit: 3 messages per 5 seconds
+                now_ts = time.time()
+                if not hasattr(player, '_chat_times'):
+                    player._chat_times = []
+                player._chat_times = [t for t in player._chat_times if t > now_ts - 5]
+                if len(player._chat_times) >= 3:
+                    await websocket.send_text(json.dumps(error_msg("Chat rate limit — wait a moment")))
+                    continue
+                player._chat_times.append(now_ts)
+                # Broadcast to room
+                room = manager.get_room(room_code)
+                if room:
+                    await room.broadcast(server_msg(
+                        ServerMessageType.CHAT_MESSAGE,
+                        {
+                            "sender_id": player.id,
+                            "sender_name": player.name,
+                            "text": text,
+                            "timestamp": now_ts,
+                        },
+                    ))
+
             else:
                 await websocket.send_text(json.dumps(error_msg(f"Unknown message type: {msg_type}")))
 
