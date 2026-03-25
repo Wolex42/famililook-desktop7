@@ -19,6 +19,9 @@ TIMEOUT = float(os.getenv("DESKTOP3_TIMEOUT", "30"))
 COMPARE_FEATURES = ["eyes", "eyebrows", "smile", "nose", "face_shape", "skin", "hair", "ears"]
 
 
+DESKTOP3_HEADERS = {"X-Biometric-Consent": "granted"}
+
+
 async def _post_form(
     path: str,
     files: dict,
@@ -28,10 +31,10 @@ async def _post_form(
     """POST multipart form to desktop3 and return JSON response."""
     url = f"{DESKTOP3_URL}{path}"
     if client:
-        resp = await client.post(url, files=files, data=data or {}, timeout=TIMEOUT)
+        resp = await client.post(url, files=files, data=data or {}, headers=DESKTOP3_HEADERS, timeout=TIMEOUT)
     else:
         async with httpx.AsyncClient() as c:
-            resp = await c.post(url, files=files, data=data or {}, timeout=TIMEOUT)
+            resp = await c.post(url, files=files, data=data or {}, headers=DESKTOP3_HEADERS, timeout=TIMEOUT)
     resp.raise_for_status()
     return resp.json()
 
