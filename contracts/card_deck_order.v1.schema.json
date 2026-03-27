@@ -1,0 +1,257 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "card_deck_order.v1",
+  "title": "FamiliUno Card Deck Order — QPMarkets Vendor Manifest",
+  "description": "JSON manifest sent to QPMarkets for physical playing card deck printing. Each order contains a full deck (up to 52 cards) with per-card metadata, print specs, and shipping details.",
+  "type": "object",
+  "required": ["schemaVersion", "orderId", "createdAt", "deck", "specification", "cards", "printLayout"],
+  "properties": {
+    "schemaVersion": {
+      "const": "card_deck_order.v1",
+      "description": "Fixed schema version identifier"
+    },
+    "orderId": {
+      "type": "string",
+      "pattern": "^FL-CD-\\d+-[a-z0-9]{6}$",
+      "description": "Unique order ID. Format: FL-CD-{timestamp}-{random6}"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of order creation"
+    },
+    "deck": {
+      "type": "object",
+      "required": ["name", "totalCards", "faceCards", "specialCards", "dataSource"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Deck display name, e.g. 'Smith Family Card Deck'"
+        },
+        "totalCards": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 52,
+          "description": "Total cards in this deck order"
+        },
+        "faceCards": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 48,
+          "description": "Number of face (person) cards"
+        },
+        "specialCards": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4,
+          "description": "Number of special cards (Mirror, Family Bond, Swap, Double)"
+        },
+        "dataSource": {
+          "type": "string",
+          "enum": ["group", "individual"],
+          "description": "Source of face data: group photo or individual analysis"
+        },
+        "faceCount": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Number of unique people in the deck"
+        },
+        "variantsPerPerson": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8,
+          "description": "Feature variant combos generated per person"
+        },
+        "calibrationAvailable": {
+          "type": "boolean",
+          "description": "Whether backend calibration data was used for feature labels"
+        }
+      }
+    },
+    "specification": {
+      "type": "object",
+      "required": ["cardWidth_mm", "cardHeight_mm", "bleed_mm", "dpi", "cardWidth_px", "cardHeight_px"],
+      "properties": {
+        "cardWidth_mm": { "const": 63.5, "description": "Card width in mm (poker standard)" },
+        "cardHeight_mm": { "const": 88.9, "description": "Card height in mm (poker standard)" },
+        "bleed_mm": { "const": 3, "description": "Bleed margin on all sides" },
+        "safeArea_mm": { "const": 4, "description": "Safe area inset from trim" },
+        "cornerRadius_mm": { "const": 3.5, "description": "Die-cut corner radius" },
+        "dpi": { "const": 300, "description": "Print resolution" },
+        "cardWidth_px": { "type": "integer", "description": "Trim-line width in pixels at 300 DPI (750px)" },
+        "cardHeight_px": { "type": "integer", "description": "Trim-line height in pixels at 300 DPI (1050px)" },
+        "bleedWidth_px": { "type": "integer", "description": "Full width including bleed — QPMarkets requires 816px" },
+        "bleedHeight_px": { "type": "integer", "description": "Full height including bleed — QPMarkets requires 1112px" },
+        "colorSpace": { "type": "string", "enum": ["RGB", "CMYK"], "description": "Color space for artwork" },
+        "format": { "type": "string", "enum": ["PNG", "PDF"], "description": "Image file format" },
+        "cardStock": { "type": "string", "description": "Card stock weight, e.g. '350gsm'" },
+        "finish": { "type": "string", "enum": ["glossy", "matte", "linen"], "description": "Card surface finish" }
+      }
+    },
+    "cards": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 52,
+      "items": {
+        "type": "object",
+        "required": ["index", "type", "imageRef"],
+        "properties": {
+          "index": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 52,
+            "description": "1-based card index in the deck"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["face", "special"],
+            "description": "Card type: face (person) or special (power card)"
+          },
+          "ownerName": {
+            "type": "string",
+            "description": "Person's name (face cards only)"
+          },
+          "familyRole": {
+            "type": ["string", "null"],
+            "enum": ["parent", "member", null],
+            "description": "Role in the family"
+          },
+          "relationship": {
+            "type": ["string", "null"],
+            "description": "Relationship label, e.g. 'Mum', 'Dad', 'Child'"
+          },
+          "rarity": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 5,
+            "description": "Card rarity / star rating"
+          },
+          "variant": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 7,
+            "description": "Feature variant combo index"
+          },
+          "variantName": {
+            "type": "string",
+            "description": "Human-readable variant name, e.g. 'Variant 3'"
+          },
+          "isCalibrated": {
+            "type": "boolean",
+            "description": "Whether features use backend-calibrated labels"
+          },
+          "displayFeatures": {
+            "type": "object",
+            "description": "4 corner features displayed on card face",
+            "properties": {
+              "eyes": { "type": "string" },
+              "smile": { "type": "string" },
+              "hair": { "type": "string" },
+              "face": { "type": "string" }
+            }
+          },
+          "allFeatures": {
+            "type": "object",
+            "description": "Full 8 features + sub-features for game mechanics",
+            "properties": {
+              "eyes": { "type": "string" },
+              "smile": { "type": "string" },
+              "hair": { "type": "string" },
+              "face": { "type": "string" },
+              "nose": { "type": "string" },
+              "brow": { "type": "string" },
+              "skin": { "type": "string" },
+              "ears": { "type": "string" }
+            }
+          },
+          "special": {
+            "type": "string",
+            "enum": ["mirror", "family", "swap", "double"],
+            "description": "Special card type (special cards only)"
+          },
+          "name": {
+            "type": "string",
+            "description": "Card display name (special cards: 'Mirror Match', etc.)"
+          },
+          "icon": {
+            "type": "string",
+            "description": "Card emoji icon"
+          },
+          "effect": {
+            "type": "string",
+            "description": "Special card gameplay effect description"
+          },
+          "imageRef": {
+            "type": "string",
+            "pattern": "^card_\\d{3}_",
+            "description": "Filename reference for the card face artwork PNG"
+          },
+          "printReady": {
+            "type": "boolean",
+            "description": "Whether artwork has been rendered at print resolution"
+          }
+        }
+      }
+    },
+    "printLayout": {
+      "type": "object",
+      "required": ["cardsPerPage", "columns", "rows", "pageSize", "totalPages"],
+      "properties": {
+        "cardsPerPage": { "const": 9, "description": "Cards per A4 page (3x3 grid)" },
+        "columns": { "const": 3 },
+        "rows": { "const": 3 },
+        "pageSize": { "const": "A4" },
+        "orientation": { "const": "portrait" },
+        "margin_mm": { "const": 10 },
+        "totalPages": { "type": "integer", "minimum": 1, "description": "Total A4 pages needed" }
+      }
+    },
+    "cardBack": {
+      "type": "object",
+      "description": "Card back design (shared across all cards)",
+      "properties": {
+        "design": {
+          "type": "string",
+          "enum": ["familiuno_default", "custom"],
+          "description": "Back design: default FamiliUno branding or custom uploaded"
+        },
+        "imageRef": {
+          "type": ["string", "null"],
+          "description": "Filename for custom back design artwork"
+        }
+      }
+    },
+    "shipping": {
+      "type": "object",
+      "required": ["name", "line1", "city", "postcode", "country"],
+      "properties": {
+        "name": { "type": "string" },
+        "line1": { "type": "string" },
+        "line2": { "type": "string" },
+        "city": { "type": "string" },
+        "postcode": { "type": "string" },
+        "country": { "type": "string", "minLength": 2, "maxLength": 2, "description": "ISO 3166-1 alpha-2 country code" }
+      }
+    },
+    "packaging": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["tuck_box", "plastic_case", "none"],
+          "description": "Packaging type for the deck"
+        },
+        "customLabel": {
+          "type": "boolean",
+          "description": "Whether to print family name on packaging"
+        }
+      }
+    },
+    "quantity": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 100,
+      "description": "Number of identical deck copies to print"
+    }
+  }
+}
