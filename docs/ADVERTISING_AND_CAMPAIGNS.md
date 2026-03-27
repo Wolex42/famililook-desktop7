@@ -29,6 +29,27 @@
 | FamiliUno Card Pack | **LIVE** | "Your family. Your card game." | Physical Uno-style game with family faces — deck ordering via QPMarkets + Stripe |
 | Native Mobile Apps | Q3-Q4 2026 | App Store launch | "Now on iPhone and Android" |
 
+### FamiliUno Launch Playbook (LIVE — 2026-03-26)
+
+**Product**: Physical 52-card family card game (£29.99 via QPMarkets + Stripe)
+**Digital companion**: FaceMatch game in-app — tutorial for the physical deck
+
+**Free trial funnel**:
+- Free users play FaceMatch with 3 cards per hand, no special cards, max 10 turns
+- After trial: upgrade CTA with two paths — Plus subscription (full game) or direct deck order (£29.99)
+- 5-step onboarding wizard teaches card rules before gameplay
+
+**Campaign hooks**:
+- TikTok: "We played our family card game" — unboxing + family game night
+- Instagram: Card deck photos with family faces — shareable, personal
+- YouTube: "How to play FamiliUno" tutorial using the digital FaceMatch game
+
+**Ambassador codes**: Backend-verified promo codes grant Plus access. Auto-redirect to /app on success. Use for influencer partnerships and launch promotions.
+
+**Multi-currency**: 8 countries supported (GB, US, CA, AU, DE, FR, IE, NL) with live exchange rates. Stripe handles currency conversion at checkout.
+
+**Subscription conversion**: Plus (£3.99/mo) unlocks full FaceMatch game + deck ordering + 10% discount. Pro (£7.99/mo) adds peer lobby + explain-why.
+
 ---
 
 ## 2. Channel Strategy
