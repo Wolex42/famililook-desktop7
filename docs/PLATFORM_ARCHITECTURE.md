@@ -196,6 +196,8 @@ For group (N people): all N×(N-1)/2 pairs are scored by desktop7, highest = win
 | **Status** | desktop4: 463 unit tests, 42 e2e. desktop5: WebSocket server complete, 37 tests |
 | **Revenue** | In-app purchases (chip packs, card cosmetics, tournament entry) |
 
+**DECISION (2026-03-27):** FamiliPoker will be merged into desktop2 as `/poker` route. FamiliMatch stays independent at `match.famililook.com`. Session token pattern (`POST /session/create`) deferred to mobile app phase.
+
 ### 3.3 FamiliMatch (IN DEVELOPMENT)
 
 | Attribute | Value |
@@ -221,6 +223,8 @@ For group (N people): all N×(N-1)/2 pairs are scored by desktop7, highest = win
 | **Card supplier API** | QPMarkets — LIVE since 2026-03-26. Full pipeline: Stripe → webhook → CardPrintClient → QPMarkets API |
 | **Status** | **LIVE** (2026-03-26) — FE complete, BE ordering pipeline complete, QPMarkets integration live |
 | **Revenue** | Per-order revenue (one-time purchase per card pack); potential subscription for ongoing reprints |
+
+**FaceMatch onboarding wizard:** FamiliUno includes a 5-step interactive onboarding wizard (`FaceMatchOnboarding`) teaching physical card deck rules: card anatomy, matching mechanics, feature modes (2/3/4 features per card), special cards, and winning conditions. Free tier: 3 cards, 10 turns, no specials. Plus tier: full 7-card hands, all specials, unlimited turns. The upgrade CTA connects to the Plus subscription and deck ordering flow.
 
 ### 3.5 FamiliTrail (BUILT — desktop2)
 
@@ -462,6 +466,10 @@ FamiliUno card ordering (Card Supplier API): full Uno-style physical card game s
 ```
 
 **Key invariants enforced here:** 8 features, 5-3 winner rule, no 50/50, order-invariant.
+
+**FamiliUno deck button in results carousel:** Each child result card in `MobileResultsCarousel` includes a "Play FamiliUno" button that navigates to `/uno?from=results` with all family data loaded. This is the primary cross-sell entry point from kinship results into the card ordering flow.
+
+**Cross-product back navigation (`?from=` pattern):** All navigation to `/uno` includes a `?from=` query parameter (`results`, `trail`, `hub`, `home`) so the back button returns users to their origin. The same pattern applies to the future `/poker` route. This ensures deep-linked product transitions always have a coherent return path.
 
 #### 5.1.1 Parent-Pair Exclusion (Couple Gate)
 
@@ -736,6 +744,10 @@ FamiliMatch (Compatibility):
 | Fusion image | Shown in UI only | Generated on request | Never |
 | Compatibility score | FamiliMatch: UI only | During room | Never |
 | Analytics events | No | No | JSONL (anonymised) |
+
+**COPPA 13+ age gate:** A `CoppaAgeGate` component (in `AgeGateModal.jsx`) fires before the first photo upload across all products. Confirmation is stored in localStorage (`fl:age-confirmed-13`). This gates all biometric processing — no face analysis endpoints are called until the user confirms they are 13 or older.
+
+**GDPR forget-me endpoint:** `POST /data/forget-me` covers 6 data stores: gallery (cleared), analytics (IP hash purge), feedback (IP + email purge), subscribers (email purge), orders (anonymised for UK tax retention), and ambassador grants (email purge). This is the single endpoint for full GDPR right-to-erasure compliance.
 
 ---
 
