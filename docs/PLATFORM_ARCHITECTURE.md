@@ -69,7 +69,7 @@ The brand hub lives at **famililook.com** (desktop2 root route). Each tile navig
 |---------|-------------|---------|--------|
 | FamiliLook | Prodigi Print API | Physical keepsake prints (mugs, framed cards, cushions, puzzles, T-shirts, etc.) | **LIVE** |
 | FamiliLook | Stripe Checkout | Payment processing (single + basket checkout, subscriptions) | **LIVE** |
-| FamiliUno | QPMarkets Card API | Physical Uno-style family card packs | Pending API key |
+| FamiliUno | QPMarkets Card API | Physical Uno-style family card packs | **LIVE** (2026-03-26) |
 | FamiliPoker | TBD card provider | Physical card decks (premium upsell, future) | Planned |
 | All products | Analytics (internal) | Event tracking → desktop3 `/analytics/track` | LIVE |
 
@@ -181,7 +181,7 @@ For group (N people): all N×(N-1)/2 pairs are scored by desktop7, highest = win
 | **Upload types** | Individual (parent A + parent B + child), or single group photo |
 | **Digital products** | 6 card games using family face data (MemoryMatch, FeatureMatch, CardGame, FaceFusion, HungryHeads, FeatureCatch) |
 | **Physical products** | Keepsake prints via Prodigi (certificates, framed cards, mugs) — NOT card game packs (that is FamiliUno) |
-| **Status** | Production (Vercel + Hetzner). 836+ FE tests, 166+ BE tests. Commerce LIVE. |
+| **Status** | Production (Vercel + Hetzner). 1,022+ FE tests, 166+ BE tests. Commerce LIVE. |
 | **Revenue** | Free tier + Premium plans + Prodigi keepsake orders |
 
 ### 3.2 FamiliPoker (IN DEVELOPMENT)
@@ -208,7 +208,7 @@ For group (N people): all N×(N-1)/2 pairs are scored by desktop7, highest = win
 | **Status** | desktop6: Solo/Duo/Group FE complete, 98 tests, build clean. desktop7: WebSocket server complete, 111 tests |
 | **Revenue** | Freemium (free comparisons, premium: unlimited + HD fusion + save/share) |
 
-### 3.4 FamiliUno (PLANNED)
+### 3.4 FamiliUno (LIVE)
 
 | Attribute | Value |
 |-----------|-------|
@@ -218,8 +218,8 @@ For group (N people): all N×(N-1)/2 pairs are scored by desktop7, highest = win
 | **Core feature** | "Turn your family face analysis into a real Uno-style card game you can order and play" |
 | **Flow** | 1. Run FamiliLook analysis → 2. Generate card deck (`/cards/generate-deck`) → 3. Preview card designs (virtual card simulation) → 4. Order physical Uno-style card pack via card supplier API |
 | **Key distinction from FamiliLook** | FamiliLook keepsakes = individual prints (Prodigi — certificates, mugs, framed photos). FamiliUno = full physical Uno card game set with your family faces printed as the card artwork |
-| **Card supplier API** | TBD — separate from Prodigi; requires a card game manufacturer (e.g. MakePlayingCards, QCCARDS, or similar) |
-| **Status** | **Planned** — product definition complete; FE/BE development not started |
+| **Card supplier API** | QPMarkets — LIVE since 2026-03-26. Full pipeline: Stripe → webhook → CardPrintClient → QPMarkets API |
+| **Status** | **LIVE** (2026-03-26) — FE complete, BE ordering pipeline complete, QPMarkets integration live |
 | **Revenue** | Per-order revenue (one-time purchase per card pack); potential subscription for ongoing reprints |
 
 ### 3.5 FamiliTrail (BUILT — desktop2)
@@ -253,7 +253,7 @@ TrailHomePage.jsx (page)
 | Game Arcade | Digital games | Purple | Memory Match, Face Fusion, Hungry Heads, Feature Catch |
 | Casino Floor | FamiliPoker | Green | Feature Poker, Feature 21, Multiplayer Battle |
 | Chemistry Lab | FamiliMatch | Pink | Solo Compare, Duo Room, Group Party |
-| Coming Soon Island | Planned features | Grey | FamiliUno Cards, Uno Multiplayer |
+| Coming Soon Island | Planned features | Grey | Uno Multiplayer |
 
 **Tier gating (22 stops):**
 - **Free:** 8 stops (core analysis, basic games, downloads)
@@ -670,7 +670,7 @@ Feature labels use the same `calibrate_all_features()` pipeline as kinship mode 
 ### 7.1 Hetzner CPX22 — Current Layout
 
 ```
-65.108.214.181 (Helsinki, EU)
+89.167.113.178 (Helsinki, EU)
 2 vCPU · 4 GB RAM · 80 GB SSD
 
 Caddy (Port 443 / 80)
@@ -817,7 +817,7 @@ printExport.js ─── HTML-to-PNG export pipeline
 | Ceramic Mug | 14.99 | GLOBAL-MUG-W | MugTimelineTemplate | No |
 | Family Mug Set | 27.99 | GLOBAL-MUG-W (x2) | FamilyMugTemplate | **Yes** |
 | T-Shirt | 19.99 | GLOBAL-TEE-GIL-5000 | — | No |
-| Baby Bodysuit | 14.99 | GLOBAL-TEE-GIL-5000 | — | No |
+| ~~Baby Bodysuit~~ | ~~14.99~~ | ~~GLOBAL-TEE-GIL-5000~~ | — | **Removed** |
 | Cushion | 24.99 | GLOBAL-CUSH-16X16-CAN-DUAL | — | No |
 | Jigsaw Puzzle (252pc) | 24.99 | JIGSAW-PUZZLE-252 | — | No |
 | Greeting Card | 7.99 | CLASSIC-GRE-FEDR-7X5-BLA | StandardCardTemplate | No |
@@ -849,7 +849,7 @@ Rates are hardcoded approximations. Stripe Adaptive Pricing handles actual conve
 
 | Repo | Language | Framework | Key Deps | Tests |
 |------|----------|-----------|----------|-------|
-| desktop2 | JavaScript | React 18 + Vite | face-api.js, TF.js, framer-motion, Stripe | Vitest 836+ + Playwright |
+| desktop2 | JavaScript | React 18 + Vite | face-api.js, TF.js, framer-motion, Stripe | Vitest 1,022+ + Playwright |
 | desktop3 | Python 3.10 | FastAPI + Uvicorn | InsightFace, AdaFace ONNX, MediaPipe, OpenCV, Stripe, Prodigi | pytest 166+ |
 | desktop4 | JavaScript | React 18 + Vite + Tailwind | face-api.js, TF.js, framer-motion | Vitest 932 + Playwright 42 |
 | desktop5 | Python 3.10 | FastAPI + Uvicorn | pydantic | pytest 37 |
@@ -895,7 +895,7 @@ Rates are hardcoded approximations. Stripe Adaptive Pricing handles actual conve
 - [ ] FamiliTrail: analytics tracking, progress persistence, achievement badges (see §3.5)
 - [ ] FamiliVault: consolidate two components, wire real percentiles, card collection page (see §3.6)
 
-### FamiliUno (desktop2 FE + desktop3 BE) — IN DEVELOPMENT
+### FamiliUno (desktop2 FE + desktop3 BE) — LIVE
 
 | Task | Status |
 |------|--------|
@@ -904,7 +904,7 @@ Rates are hardcoded approximations. Stripe Adaptive Pricing handles actual conve
 | FamiliUno section in desktop2 FE | **Complete** — `FamiliUnoPage.jsx` with upload, analysis, and card deck generation |
 | Card deck preview / virtual simulation | Complete (reuses CardGame component) |
 | Physical card pack order flow | Backend ordering endpoints complete (`POST /orders/card-deck`) |
-| Card supplier API integration | `CardPrintClient` in `vendor_client.py` — manifest validation + QPMarkets API. Pending API key. |
+| Card supplier API integration | `CardPrintClient` in `vendor_client.py` — manifest validation + QPMarkets API. **LIVE** (2026-03-26). |
 
 ### FamiliPoker (desktop4 + desktop5) — IN DEVELOPMENT
 
@@ -943,8 +943,8 @@ Rates are hardcoded approximations. Stripe Adaptive Pricing handles actual conve
 
 ```
 FML/                              (parent repo — main branch)
-├── famililook-desktop2/          LIVE — FamiliLook FE (submodule)
-├── famililook-desktop3/          LIVE — Shared Analysis Engine (submodule)
+├── famililook-desktop2/          LIVE — FamiliLook FE (independent repo, NOT submodule)
+├── famililook-desktop3/          LIVE — Shared Analysis Engine (independent repo, NOT submodule)
 ├── famililook-desktop4/          DEV  — FamiliPoker FE
 ├── famililook-desktop5/          DEV  — FamiliPoker Game Server
 ├── famililook-desktop6/          DEV  — FamiliMatch FE
