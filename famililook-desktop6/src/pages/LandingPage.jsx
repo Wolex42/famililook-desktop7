@@ -134,16 +134,8 @@ const MODE_CARDS = [
   },
 ];
 
-const SEED = 12847;
 function useComparisonCount() {
-  const [count, setCount] = useState(SEED);
-  useEffect(() => {
-    const tick = setInterval(() => {
-      setCount((c) => c + Math.floor(Math.random() * 3));
-    }, 8000);
-    return () => clearInterval(tick);
-  }, []);
-  return count.toLocaleString();
+  return 'Thousands of';
 }
 
 function Orb({ className }) {

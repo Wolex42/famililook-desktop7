@@ -100,13 +100,13 @@ async function createMorph(blobA, blobB) {
  * @param {string} photoB - data URL
  * @param {function} onProgress - (step, progress) callback
  */
-export async function compareSolo(photoA, photoB, onProgress) {
+export async function compareSolo(photoA, photoB, onProgress, nameA = 'Person A', nameB = 'Person B') {
   const blobA = dataUrlToBlob(photoA);
   const blobB = dataUrlToBlob(photoB);
 
   // Step 1: Peer-to-peer comparison (symmetric, no kinship framing)
   onProgress?.('Analyzing faces...', 20);
-  const result = await compareFacesDirect(blobA, blobB);
+  const result = await compareFacesDirect(blobA, blobB, nameA, nameB);
   onProgress?.('Processing results...', 60);
 
   // Step 2: Face morph — the product differentiator

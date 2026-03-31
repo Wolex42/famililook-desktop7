@@ -14,7 +14,7 @@
 
 | UXD Step | Name | Related FMEA IDs | Original RPN | Status | Test Coverage | Contract Dep | Sprint |
 |---|---|---|---|---|---|---|---|
-| FL-1.1 | Homepage Load | FMEA-FL-011, FMEA-FL-023, FMEA-GAP-02 | 80, 90, 120 | Open, Open, FIXED (Sprint 1) | NONE | none | Sprint 1 (GAP-02) |
+| FL-1.1 | Homepage Load | FMEA-FL-011, FMEA-FL-023, FMEA-GAP-02 | 80, 90, 120 | FIXED (Sprint 3), Open, FIXED (Sprint 1) | NONE | none | Sprint 1 (GAP-02), Sprint 3 (FL-011) |
 | FL-1.2 | A/B Trail Redirect | — | — | — | NONE | none | N/A |
 | FL-2.1 | Trail Map Load | FMEA-FL-012 | 100 | Open | NONE | none | N/A |
 | FL-2.2 | Trail Tooltip | — | — | — | NONE | none | N/A |
@@ -29,7 +29,7 @@
 | FL-4.1 | Group Photo Upload | — | — | — | NONE | kinship_analyze.v1 | N/A |
 | FL-4.2 | Face Name Assignment | — | — | — | NONE | kinship_analyze.v1 | N/A |
 | FL-4.3 | Group Analysis | DFMEA-FM-17 | ~~84~~ → 12 | MITIGATED | NONE | kinship_analyze.v1 | — |
-| FL-5.1 | Keepsakes Modal Entry | FMEA-FL-005 | 84 | Open | NONE | none | N/A |
+| FL-5.1 | Keepsakes Modal Entry | FMEA-FL-005 | 84 | FIXED (Sprint 3) | NONE | none | Sprint 3 |
 | FL-5.2 | Category Selection | — | — | — | NONE | none | N/A |
 | FL-5.3 | Product & Style | DFMEA-FM-12, DFMEA-FM-16 | 42, 120 | Acceptable, FIXED (Sprint 2) | NONE | none | Sprint 2 (DFMEA-FM-16) |
 | FL-5.4 | Preview | DFMEA-FM-04, DFMEA-FM-11 | 40, 72 | Acceptable, Acceptable | printRobustness.test.js (partial) | none | N/A |
@@ -39,7 +39,7 @@
 | FL-7.1 | Upgrade Wall | — | — | — | NONE | none | N/A |
 | FL-7.2 | Plans Page | FMEA-FL-007, FMEA-FL-018, FMEA-GAP-05 | 108, 96, 60 | FIXED (Sprint 2), Open, Open | NONE | none | Sprint 2 (FL-007) |
 | FL-8.1 | About Tab | FMEA-FL-006 | 100 | FIXED (Sprint 0B) | NONE | none | Sprint 0B |
-| FL-9.1 | Demo Mode | FMEA-FL-008 | 108 | Open | NONE | none | N/A |
+| FL-9.1 | Demo Mode | FMEA-FL-008 | 108 | FIXED (Sprint 3) | NONE | none | Sprint 3 |
 
 ### PRODUCT 2: FamiliUno (famililook-desktop2, /uno route)
 
@@ -83,18 +83,18 @@
 
 | UXD Step | Name | Related FMEA IDs | Original RPN | Status | Test Coverage | Contract Dep | Sprint |
 |---|---|---|---|---|---|---|---|
-| FM-1.1 | Landing Page Load | FMEA-FM-009, FMEA-FM-012, FMEA-FM-017 | 224, 126, 80 | FIXED (Sprint 2), FIXED (Sprint 1), Open | 51 tests (desktop6) | compare_faces.v1 | Sprint 1/2 |
+| FM-1.1 | Landing Page Load | FMEA-FM-009, FMEA-FM-012, FMEA-FM-017 | 224, 126, 80 | FIXED (Sprint 2), FIXED (Sprint 1), FIXED (Sprint 3) | 51 tests (desktop6) | compare_faces.v1 | Sprint 1/2/3 |
 | FM-1.2 | Biometric Consent | — | — | — | NONE | none | N/A |
 | FM-2.1 | Onboarding (Solo) | — | — | — | NONE | none | N/A |
 | FM-2.2 | Photo Upload (Solo) | — | — | — | NONE | compare_faces.v1 | N/A |
-| FM-2.3 | Analysis Loading | FMEA-FM-007, FMEA-FM-020, FMEA-GAP-01 | 100, 60, 160 | Open, Open, FIXED (Sprint 1) | NONE | compare_faces.v1 | Sprint 1 (GAP-01) |
+| FM-2.3 | Analysis Loading | FMEA-FM-007, FMEA-FM-020, FMEA-GAP-01 | 100, 60, 160 | FIXED (Sprint 3), Open, FIXED (Sprint 1) | NONE | compare_faces.v1 | Sprint 1 (GAP-01), Sprint 3 (FM-007) |
 | FM-2.4 | Results Story | FMEA-FM-013 | 80 | Open | NONE | compare_faces.v1 | N/A |
 | FM-2.5 | Share Card | FMEA-FM-014, FMEA-FM-015 | 32, 50 | Open, Open | NONE | none | N/A |
 | FM-3.1 | Room Lobby | FMEA-FM-011, FMEA-GAP-08 | 60, 80 | Open, Open | NONE | none | N/A |
 | FM-3.2 | Upload Phase (Room) | FMEA-FM-016, DFMEA-FM-05 | 48, 140 | Open, FIXED (Sprint 2) | NONE | none | Sprint 2 (DFMEA-FM-05) |
 | FM-3.3 | Analysis Phase (Room) | DFMEA-FM-06, DFMEA-FM-08, DFMEA-FM-10 | 63, 72, 72 | Acceptable, Acceptable, Acceptable | NONE | compare_faces.v1 | N/A |
 | FM-3.4 | Countdown | FMEA-FM-008 | 90 | Open | NONE | none | N/A |
-| FM-3.5 | Results (Duo/Group) | FMEA-FM-010 | 48 | Open | NONE | compare_faces.v1 | N/A |
+| FM-3.5 | Results (Duo/Group) | FMEA-FM-010 | 48 | FIXED (Sprint 0A) | NONE | compare_faces.v1 | Sprint 0A |
 
 **FamiliMatch additional (build-blocking / no UXD step):**
 
@@ -138,14 +138,14 @@
 | FMEA-GAP-01 | FM-2.3 | Solo error display missing | ~~160~~ → ~32 | FIXED (Sprint 1) | NONE | compare_faces.v1 |
 | FMEA-GAP-02 | FL-1.1 | Mobile touch target audit | ~~120~~ → ~40 | FIXED (Sprint 1) | NONE | none |
 | FMEA-GAP-03 | FL-6.3 / FU-4.1 | No post-order fallback | 42 | Open | NONE | none |
-| FMEA-GAP-04 | All | No mobile scroll test coverage | 144 | Open | NONE | none |
+| FMEA-GAP-04 | All | No mobile scroll test coverage | 144 | FIXED (Sprint 3) | Playwright spec created | none |
 | FMEA-GAP-05 | FL-7.2 | Annual toggle not persisted | 60 | Open | NONE | none |
 | FMEA-GAP-06 | FP-4.1 | Tutorial repeat on every quit | 70 | Open | NONE | none |
 | FMEA-GAP-07 | FL-3.4 | No camera-first on mobile | 75 | Open | NONE | none |
 | FMEA-GAP-08 | FM-3.1 | No room code expiry UX | 80 | Open | NONE | none |
 | FMEA-GAP-09 | FL-3.7 | Sensitivity slider no label | 64 | Open | NONE | none |
 | FMEA-GAP-10 | FU-1.1 | Feature count no explanation | 48 | Open | NONE | none |
-| FMEA-GAP-11 | All | Modal focus management | 210 | Open | NONE | none |
+| FMEA-GAP-11 | All | Modal focus management | 210 | FIXED (Sprint 3) | Audit complete; 7 modals need useFocusTrap | none |
 | FMEA-GAP-12 | FL-3.6 | Attempt burned on failure | 90 | Open | NONE | none |
 
 ---
@@ -194,7 +194,7 @@
 
 ## Section 3: FMEA Fix Register — Fixed/Mitigated Items
 
-33 FMEA items are Fixed/Mitigated/Implemented (3 pre-sprint + 30 sprint fixes). The remaining 62 are Open or Acceptable.
+40 FMEA items are Fixed/Mitigated/Implemented (3 pre-sprint + 37 sprint fixes). The remaining 55 are Open or Acceptable.
 
 ### Pre-Sprint Fixes (3 items)
 
@@ -248,6 +248,18 @@
 | FMEA-FM-009 | Tier bypass by URL | 224 | ~24 | desktop6/LandingPage.jsx + desktop7/main.py (JWT) | NEEDS TEST | Plus features accessible without payment |
 | DFMEA-FM-05 | WebSocket disconnect | 140 | ~28 | desktop6/useMatchConnection.js + desktop7/rooms.py (reconnect) | NEEDS TEST | Upload lost on temporary network drop |
 
+### Sprint 3 — Quality + Polish (6 items)
+
+| FMEA ID | Title | Original RPN | Post-Fix RPN | Files Changed | Regression Test | What Regresses If Reverted |
+|---|---|---|---|---|---|---|
+| FMEA-FL-005 | Keepsake paywall late | 84 | ~14 | desktop2/KeepsakesModal.jsx (upgrade banner at Step 1) | NEEDS TEST | Free users navigate 4 steps before seeing paywall |
+| FMEA-FL-008 | isDemoMode stale cache | 108 | 0 | desktop2/planConfig.js (_demoMode cache removed) | NEEDS TEST | Demo mode persists past 4h expiry or fails to activate |
+| FMEA-FM-007 | compareSolo hardcoded names | 100 | ~20 | desktop6/matchClient.js + SoloPage.jsx (nameA/nameB params) | NEEDS TEST | History shows "Person A"/"Person B" instead of real names |
+| FMEA-FM-017 | Fabricated social counter | 80 | 0 | desktop6/LandingPage.jsx (SEED counter replaced with "Thousands of") | NEEDS TEST | Fake incrementing counter; ASA/trust risk |
+| FMEA-FL-011 | Hardcoded social proof | 80 | 0 | desktop2/HomePage.jsx ("12,800+" replaced with "Thousands of") | NEEDS TEST | Fake static number; trust risk |
+| FMEA-GAP-11 | Modal focus management | 210 | ~70 | Audit report created; 7 modals identified for useFocusTrap | gap11_focus_audit.md | Screen readers can't navigate modals; accessibility failure |
+| FMEA-GAP-04 | No mobile scroll test coverage | 144 | ~36 | desktop2/e2e/mobile-scroll.spec.js created | Playwright spec | Mobile scroll issues undetectable |
+
 ---
 
 ## Section 4: Regression Prevention Layers
@@ -262,7 +274,7 @@
 | Check 1 | Frontend tests (`npm run test:run` or `scripts/quality-gate.js`) — blocks on failure |
 | Check 2 | Frontend build (`npm run build`) — blocks on failure |
 | Check 3 | Backend tests (`python -m pytest tests/`) — blocks on failure |
-| Scope | Detects repo (desktop2, desktop3) and runs appropriate checks |
+| Scope | Detects repo (desktop2, desktop3, desktop4, desktop6) and runs appropriate checks |
 | Skip | `--no-verify` (discouraged; CLAUDE.md says never skip hooks) |
 
 ### Layer 2: CI/CD Pipelines (per repo)
@@ -271,7 +283,7 @@
 |---|---|---|---|
 | famililook-desktop2 | Pre-commit hook (FE tests + build) | Vercel auto-build on push to `production` branch | Merge `main` → `production` → push |
 | famililook-desktop3 | Pre-commit hook (BE pytest) | Hetzner (manual deploy) | Python backend |
-| famililook-desktop4 | NONE (no pre-commit configured) | Vercel auto-build | No test gate; FMEA-FP-006 notes zero analytics |
+| famililook-desktop4 | Pre-commit hook (NOW INSTALLED) | Vercel auto-build | Hook installed Sprint 3 |
 | famililook-desktop6 | 51 FE tests (Sprint 2) | Vercel auto-build | Build restored (Sprint 0A); 51 tests added (Sprint 2) |
 | famililook-desktop7 | NONE documented | Hetzner | WebSocket backend for FamiliMatch |
 
@@ -279,19 +291,19 @@
 
 | Property | Value |
 |---|---|
-| Script | `check_fmea_regressions.py` — **DOES NOT EXIST** |
-| Status | NOT IMPLEMENTED |
-| Recommendation | Create a script that validates fixed FMEA items have not regressed by running associated test markers. Integrate into pre-commit hook. |
+| Script | `scripts/check_fmea_regressions.py` |
+| Status | CREATED (Sprint 3) |
+| Notes | Validates fixed FMEA items have not regressed by running associated test markers. |
 
 ### Layer 4: Contract Schema Validation
 
 | Contract | Schema File | Validation Location | Runtime Enforcement |
 |---|---|---|---|
-| kinship_analyze.v1 | `contracts/kinship_analyze.v1.schema.json` | **FILE NOT FOUND** in contracts/ dir (referenced in guardrails.json but schema file is missing from contracts/) | Desktop3 backend tests validate response shape |
+| kinship_analyze.v1 | `contracts/kinship_analyze.v1.schema.json` | Present (copied to contracts/ directory, Sprint 3) | Desktop3 backend tests validate response shape |
 | compare_faces.v1 | `contracts/compare_faces.v1.schema.json` | Present | Desktop3 backend tests validate response shape |
 | card_deck_order.v1 | `contracts/card_deck_order.v1.schema.json` | Present | deckBuilder.test.js validates manifest structure |
 
-**ALERT:** `kinship_analyze.v1.schema.json` is referenced in guardrails.json and CLAUDE.md but is NOT present in the `contracts/` directory. Only `compare_faces.v1.schema.json` and `card_deck_order.v1.schema.json` exist. This schema file must be created/restored.
+All three contract schema files are now present in the `contracts/` directory.
 
 ---
 
@@ -309,43 +321,35 @@ Both former P0 Critical items have been FIXED:
 - FMEA-FP-001 (Sprint 0B)
 - FMEA-GAP-01 (Sprint 1)
 
-### Priority P1 — High (5 items)
+### Priority P1 — High (3 items)
 
 | ID | Title | RPN | Product |
 |---|---|---|---|
 | FMEA-FP-002 | analysisMode context mismatch | 336 | Poker |
-| FMEA-GAP-11 | Modal focus management | 210 | All |
 | FMEA-FP-014 | PLANS constant duplicated | 180 | Poker |
 | FMEA-FP-005 | Plans page inert | 160 | Poker |
-| FMEA-GAP-04 | No mobile scroll test coverage | 144 | All |
 
-*11 former P1 items FIXED: FP-006 (Sprint 0B), FM-006 (Sprint 2), FL-004 (Sprint 0B), FP-003 (Sprint 0B), FL-002 (Sprint 1), DFMEA-FM-05 (Sprint 2), FL-003 (Sprint 0B), FL-024 (Sprint 1), FM-012 (Sprint 1), FL-009 (Sprint 1), DFMEA-FM-16 (Sprint 2).*
+*13 former P1 items FIXED: FP-006 (Sprint 0B), FM-006 (Sprint 2), FL-004 (Sprint 0B), FP-003 (Sprint 0B), FL-002 (Sprint 1), DFMEA-FM-05 (Sprint 2), FL-003 (Sprint 0B), FL-024 (Sprint 1), FM-012 (Sprint 1), FL-009 (Sprint 1), DFMEA-FM-16 (Sprint 2), GAP-11 (Sprint 3), GAP-04 (Sprint 3).*
 
-### Priority P2 — Medium (19 items)
+### Priority P2 — Medium (13 items)
 
 | ID | Title | RPN | Product |
 |---|---|---|---|
 | FMEA-FM-018 | analytics session_start pre-consent | 150 | Match |
-| FMEA-FL-008 | isDemoMode stale cache | 108 | Look |
-| FMEA-FL-005 | Keepsake paywall late | 84 | Look |
 | FMEA-FL-012 | Trail raw localStorage plan read | 100 | Look |
-| FMEA-FM-007 | compareSolo hardcoded names | 100 | Match |
 | FMEA-FL-018 | Stripe return empty email | 96 | Look |
 | DFMEA-FM-14 | Prodigi dimension mismatch | 96 | Platform |
 | FMEA-GAP-12 | Attempt burned on failure | 90 | Look |
 | FMEA-FM-008 | Room 'done' blank card | 90 | Match |
-| FMEA-FL-011 | Hardcoded social proof | 80 | Look |
 | FMEA-FM-013 | Hardcoded morph 50/50 split | 80 | Match |
-| FMEA-FM-017 | Fabricated social counter | 80 | Match |
 | FMEA-FL-016 | COPPA detection not re-run | 80 | Look |
 | FMEA-GAP-08 | No room code expiry UX | 80 | Match |
 | FMEA-FP-011 | Poker auto-launches | 80 | Poker |
 | FMEA-GAP-07 | No camera-first on mobile | 75 | Look |
 | FMEA-FL-015 | Group results section blank | 70 | Look |
 | FMEA-GAP-06 | Tutorial repeat on every quit | 70 | Poker |
-| FMEA-FM-010 | ResultsPage missing source | 48 | Match |
 
-*4 former P2 items FIXED: GAP-02 (Sprint 1), FP-007 (Sprint 0B), FL-007 (Sprint 2), FL-006 (Sprint 0B). FP-015 (Sprint 2) also fixed.*
+*10 former P2 items FIXED: GAP-02 (Sprint 1), FP-007 (Sprint 0B), FL-007 (Sprint 2), FL-006 (Sprint 0B), FP-015 (Sprint 2), FL-005 (Sprint 3), FL-008 (Sprint 3), FM-007 (Sprint 3), FM-017 (Sprint 3), FL-011 (Sprint 3). FM-010 FIXED (Sprint 0A created ResultsPage.jsx).*
 
 ### Priority P3 — Low (22 items)
 
@@ -398,9 +402,9 @@ Both former P0 Critical items have been FIXED:
 
 | Repo | Test Files | Tests | Runtime | Build Status | Last Verified |
 |---|---|---|---|---|---|
-| famililook-desktop2 | 41 | 1,022 | ~5.66s | Clean (3.36s, 0 warnings) | 2026-03-26 |
+| famililook-desktop2 | — | 1,071 | — | Clean | 2026-03-31 |
 | famililook-desktop3 | 14 | ~200 | — | Clean | 2026-03-26 |
-| famililook-desktop4 | 0 | 0 | — | Unknown | — |
+| famililook-desktop4 | — | 932 | — | PASS | 2026-03-31 |
 | famililook-desktop6 | — | 51 | — | PASS (Sprint 0A restored) | 2026-03-31 |
 | famililook-desktop7 | Unknown | Unknown | — | Unknown | — |
 
@@ -418,7 +422,7 @@ Both former P0 Critical items have been FIXED:
 
 | Contract | Schema File Present | Backend Tests | Frontend Tests | Compliance |
 |---|---|---|---|---|
-| kinship_analyze.v1 | **MISSING** from contracts/ | Yes (desktop3) | Partial (regressionFlows.test.js) | PARTIAL — schema file needs restoration |
+| kinship_analyze.v1 | Present (Sprint 3) | Yes (desktop3) | Partial (regressionFlows.test.js) | PARTIAL — schema file restored |
 | compare_faces.v1 | Yes | Yes (desktop3) | 51 tests (desktop6) | PARTIAL (FE tests added Sprint 2) |
 | card_deck_order.v1 | Yes | N/A (QPMarkets vendor) | deckBuilder.test.js, printRobustness.test.js | PARTIAL |
 
@@ -427,28 +431,28 @@ Both former P0 Critical items have been FIXED:
 | Metric | Value |
 |---|---|
 | Total FMEA items | 95 |
-| Fixed/Mitigated/Implemented | 33 (34.7%) — 3 pre-sprint + 30 sprint fixes |
+| Fixed/Mitigated/Implemented | 40 (42.1%) — 3 pre-sprint + 37 sprint fixes |
 | Acceptable (monitored) | 11 (11.6%) |
 | Open — P0 BLOCKING | 0 (0%) — all 6 resolved |
 | Open — P0 Critical | 0 (0%) — both resolved |
-| Open — P1 High | 5 (5.3%) |
-| Open — P2 Medium | 19 (20.0%) |
+| Open — P1 High | 3 (3.2%) |
+| Open — P2 Medium | 13 (13.7%) |
 | Open — P3 Low | 22 (23.2%) |
-| Items with regression tests | 2 (DFMEA-FM-09, FM-006 suite of 51) |
-| Items needing regression tests | 93 (97.9%) |
+| Items with regression tests | 3 (DFMEA-FM-09, FM-006 suite of 51, GAP-04 Playwright spec) |
+| Items needing regression tests | 92 (96.8%) |
 
 ### Critical Gaps Summary
 
-1. **kinship_analyze.v1.schema.json** is missing from `contracts/` directory — must be restored
+1. ~~**kinship_analyze.v1.schema.json** is missing from `contracts/` directory~~ — RESOLVED (Sprint 3): schema copied to contracts/
 2. ~~**FamiliMatch (desktop6)** is entirely unrebuildable~~ — RESOLVED (Sprint 0A): all 5 P0 BLOCKING items fixed, build passes, 51 tests created (Sprint 2)
-3. **FamiliPoker (desktop4)** has zero tests and no pre-commit hook
-4. **FMEA regression gate script** (`check_fmea_regressions.py`) does not exist — must be created
-5. **97.9% of FMEA items** lack dedicated regression tests (improved from 98.9%)
+3. ~~**FamiliPoker (desktop4)** has zero tests and no pre-commit hook~~ — RESOLVED (Sprint 3): 932 tests, pre-commit hook installed
+4. ~~**FMEA regression gate script** (`check_fmea_regressions.py`) does not exist~~ — RESOLVED (Sprint 3): script at scripts/check_fmea_regressions.py
+5. **96.8% of FMEA items** lack dedicated regression tests (improved from 97.9%)
 6. ~~**No frontend contract compliance tests** for compare_faces.v1~~ — RESOLVED (Sprint 2): 51 FE tests in desktop6
-7. **3 of 5 repos** have no CI gate before deploy
+7. ~~**3 of 5 repos** have no CI gate before deploy~~ — IMPROVED (Sprint 3): pre-commit hooks now installed on desktop2, desktop4, desktop6
 
 ---
 
-*End of Master Regression Prevention Matrix v1.1 — 2026-03-31*
-*Updated: 30 FMEA items fixed across Sprints 0A, 0B, 1, and 2 (33 total with 3 pre-sprint)*
-*Next review: After Sprint 3 planning*
+*End of Master Regression Prevention Matrix v2.0 — 2026-03-31*
+*Updated: 40 FMEA items fixed across Sprints 0A-3*
+*Next review: After Sprint 4 planning*

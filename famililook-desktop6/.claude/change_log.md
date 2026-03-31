@@ -36,6 +36,19 @@ Format: Description / Context / Action (D/C/A)
 
 ---
 
+## 2026-03-31 | Sprint 3: Quality + Polish (CR-0010)
+
+**Risk Tier**: P2–P3 (mixed)
+**Approved by**: CEO
+**Executed by**: FE Lead agent | **Verified by**: QA Lead agent
+
+| Date | Repo | Type | Description | Ref | Tier | Approver | Status |
+|------|------|------|-------------|-----|------|----------|--------|
+| 2026-03-31 | desktop6 | Code | FM-007: Name passthrough — compareSolo() accepts nameA/nameB params; SoloPage passes userName and personBName with fallback defaults | FM-007 | P2 | CEO | CLOSED |
+| 2026-03-31 | desktop6 | Code | FM-017: Fabricated counter — useComparisonCount() returns "Thousands of" instead of fake incrementing number on LandingPage | FM-017 | P3 | CEO | CLOSED |
+
+---
+
 ## 2026-03-31 | Sprint 2: DFMEA + Gap Analysis Fixes (CR-0009)
 
 **Risk Tier**: P2

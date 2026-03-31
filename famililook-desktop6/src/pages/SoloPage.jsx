@@ -54,6 +54,7 @@ export default function SoloPage() {
   const [results, setResults] = useState(null);
   const [error, setError] = useState(null);
   const [showShare, setShowShare] = useState(false);
+  const [personBName, setPersonBName] = useState('');
   const { addEntry } = useMatchHistory();
 
   const handleCompare = async () => {
@@ -83,7 +84,7 @@ export default function SoloPage() {
     try {
       const result = await compareSolo(photoA, photoB, (step, pct) => {
         setProgress({ step, pct });
-      });
+      }, userName || 'You', personBName || 'Them');
       const elapsed = Date.now() - started;
       const remaining = Math.max(0, 8000 - elapsed);
       await new Promise((r) => setTimeout(r, remaining));
@@ -192,8 +193,17 @@ export default function SoloPage() {
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <PhotoUpload label="Photo A" onPhotoReady={setPhotoA} />
-                  <PhotoUpload label="Photo B" onPhotoReady={setPhotoB} />
+                  <PhotoUpload label={userName || 'Photo A'} onPhotoReady={setPhotoA} />
+                  <div className="flex flex-col gap-2">
+                    <PhotoUpload label={personBName || 'Photo B'} onPhotoReady={setPhotoB} />
+                    <input
+                      type="text"
+                      placeholder="Their name"
+                      value={personBName}
+                      onChange={(e) => setPersonBName(e.target.value)}
+                      className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                    />
+                  </div>
                 </div>
 
                 {error && (
