@@ -29,10 +29,10 @@
 | FL-4.1 | Group Photo Upload | — | — | — | NONE | kinship_analyze.v1 | N/A |
 | FL-4.2 | Face Name Assignment | — | — | — | NONE | kinship_analyze.v1 | N/A |
 | FL-4.3 | Group Analysis | DFMEA-FM-17 | ~~84~~ → 12 | MITIGATED | NONE | kinship_analyze.v1 | — |
-| FL-5.1 | Keepsakes Modal Entry | FMEA-FL-005 | 84 | FIXED (Sprint 3) | NONE | none | Sprint 3 |
+| FL-5.1 | Keepsakes Modal Entry | FMEA-FL-005, **FMEA-MOB-03** | 84, **100** | FIXED (Sprint 3), **FIXED (Post-Sprint)** | NONE | none | Sprint 3 |
 | FL-5.2 | Category Selection | — | — | — | NONE | none | N/A |
 | FL-5.3 | Product & Style | DFMEA-FM-12, DFMEA-FM-16 | 42, 120 | Acceptable, FIXED (Sprint 2) | NONE | none | Sprint 2 (DFMEA-FM-16) |
-| FL-5.4 | Preview | DFMEA-FM-04, DFMEA-FM-11, **FMEA-FL-025** | 40, 72, **126** | Acceptable, Acceptable, **Open** | printRobustness.test.js (partial) | none | N/A |
+| FL-5.4 | Preview | DFMEA-FM-04, DFMEA-FM-11, **FMEA-FL-025**, **FMEA-MOB-01**, **FMEA-MOB-02**, **FMEA-MOB-04** | 40, 72, **126**, **160**, **144**, **126** | Acceptable, Acceptable, **Open**, **FIXED (Post-Sprint)**, **FIXED (Post-Sprint)**, **FIXED (Post-Sprint)** | printRobustness.test.js (partial) | none | N/A |
 | FL-6.1 | Basket Drawer | DFMEA-FM-14, DFMEA-FM-15 | 96, 30 | Monitor, Acceptable | addressValidation.test.js | none | N/A |
 | FL-6.2 | Stripe Checkout | DFMEA-FM-13 | 32 | Acceptable | NONE | none | N/A |
 | FL-6.3 | Order Success | FMEA-FL-003, FMEA-FL-022, FMEA-GAP-03 | 128, 45, 42 | FIXED (Sprint 0B), Open, Open | NONE | none | Sprint 0B (FL-003) |
@@ -194,7 +194,7 @@
 
 ## Section 3: FMEA Fix Register — Fixed/Mitigated Items
 
-40 FMEA items are Fixed/Mitigated/Implemented (3 pre-sprint + 37 sprint fixes). The remaining 55 are Open or Acceptable.
+44 FMEA items are Fixed/Mitigated/Implemented (3 pre-sprint + 37 sprint fixes + 4 keepsake mobile fixes). The remaining 55 are Open or Acceptable.
 
 ### Pre-Sprint Fixes (3 items)
 
@@ -293,6 +293,15 @@
 | SoloPage | Back button 44px, brand button 44px, person B input 44px | desktop6 SoloPage.jsx |
 | RoomPage | Brand button 44px | desktop6 RoomPage.jsx |
 | ShareCard | Responsive width | desktop6 ShareCard.jsx |
+
+#### Keepsake Mobile Fixes (4 items)
+
+| FMEA ID | Title | Original RPN | Post-Fix RPN | Files Changed | Regression Test | What Regresses If Reverted |
+|---|---|---|---|---|---|---|
+| FMEA-MOB-01 | Mug template preview illegible on mobile — 0.41x scale | 160 | ~20 | desktop2/KeepsakesModal.jsx (0.7x min scale + horizontal scroll + swipe hint) | NEEDS TEST | Mug preview text renders at ~5.7px — illegible on mobile |
+| FMEA-MOB-02 | Large template previews compressed below readability | 144 | ~18 | desktop2/KeepsakesModal.jsx (0.6x min scale clamp + scroll affordance) | NEEDS TEST | Fine art/cushion/canvas previews unreadable on mobile |
+| FMEA-MOB-03 | Keepsakes modal wastes vertical space on mobile | 100 | ~15 | desktop2/KeepsakesModal.jsx (100dvh on mobile + pillbox step navigator) | NEEDS TEST | Modal uses small centered box; no backward step navigation |
+| FMEA-MOB-04 | Character mug wrong illustration for non-parent roles | 126 | ~12 | desktop2/normaliseParent.js (17 roles + multilingual aliases → 6 character types) | NEEDS TEST | Grandma/Son/Uncle etc. show wrong character illustration |
 
 #### Security Hardening (6 items)
 
@@ -485,17 +494,17 @@ Both former P0 Critical items have been FIXED:
 
 | Metric | Value |
 |---|---|
-| Total FMEA items | 97 |
-| Fixed/Mitigated/Implemented | 40 (41.2%) — 3 pre-sprint + 37 sprint fixes |
-| Post-Sprint Hardening | 27 additional fixes (10 integration gaps + 11 mobile conversion + 6 security) |
-| Acceptable (monitored) | 11 (11.3%) |
+| Total FMEA items | 101 |
+| Fixed/Mitigated/Implemented | 44 (43.6%) — 3 pre-sprint + 37 sprint fixes + 4 keepsake mobile fixes |
+| Post-Sprint Hardening | 31 additional fixes (10 integration gaps + 11 mobile conversion + 6 security + 4 keepsake mobile) |
+| Acceptable (monitored) | 11 (10.9%) |
 | Open — P0 BLOCKING | 0 (0%) — all 6 resolved |
 | Open — P0 Critical | 0 (0%) — both resolved |
-| Open — P1 High | 4 (4.1%) — +1 FL-025 stale chunk |
-| Open — P2 Medium | 14 (14.4%) — +1 FL-026 data loss on cancel |
-| Open — P3 Low | 22 (22.7%) |
+| Open — P1 High | 4 (4.0%) — +1 FL-025 stale chunk |
+| Open — P2 Medium | 14 (13.9%) — +1 FL-026 data loss on cancel |
+| Open — P3 Low | 22 (21.8%) |
 | Items with regression tests | 3 (DFMEA-FM-09, FM-006 suite of 51, GAP-04 Playwright spec) |
-| Items needing regression tests | 92 (96.8%) |
+| Items needing regression tests | 96 (96.0%) |
 
 ### Critical Gaps Summary
 
@@ -529,7 +538,7 @@ Both former P0 Critical items have been FIXED:
 
 ---
 
-*End of Master Regression Prevention Matrix v3.0 — 2026-03-31*
-*Updated: 40 FMEA items fixed across Sprints 0A-3 + 27 post-sprint hardening fixes*
+*End of Master Regression Prevention Matrix v3.1 — 2026-03-31*
+*Updated: 44 FMEA items fixed across Sprints 0A-3 + 31 post-sprint hardening fixes (incl. 4 keepsake mobile)*
 *UXD sign-off: CONDITIONAL — 7-day monitoring, full sign-off 2026-04-07*
 *Next review: 2026-04-07 (end of monitoring period)*
