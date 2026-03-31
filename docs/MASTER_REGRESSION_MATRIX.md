@@ -24,7 +24,7 @@
 | FL-3.3 | Intent Selection | — | — | — | NONE | none | N/A |
 | FL-3.4 | Photo Upload | FMEA-FL-014, FMEA-FL-016, FMEA-GAP-07 | 90, 80, 75 | Open, Open, Open | NONE | none | N/A |
 | FL-3.5 | COPPA Age Gate | FMEA-FL-016 | 80 | Open | NONE | none | N/A |
-| FL-3.6 | Analyze | FMEA-FL-002, FMEA-GAP-12 | 140, 90 | FIXED (Sprint 1), Open | NONE | kinship_analyze.v1 | Sprint 1 (FL-002) |
+| FL-3.6 | Analyze | FMEA-FL-002, FMEA-GAP-12, **FMEA-FL-026** | 140, 90, **80** | FIXED (Sprint 1), Open, **Open** | NONE | kinship_analyze.v1 | Sprint 1 (FL-002) |
 | FL-3.7 | Results Display | FMEA-FL-015, FMEA-FL-021, DFMEA-FM-02, DFMEA-FM-03, FMEA-GAP-09 | 70, 24, 72, 70, 64 | Open, Open, Acceptable, Acceptable, Open | regressionFlows.test.js (partial) | kinship_analyze.v1 | N/A |
 | FL-4.1 | Group Photo Upload | — | — | — | NONE | kinship_analyze.v1 | N/A |
 | FL-4.2 | Face Name Assignment | — | — | — | NONE | kinship_analyze.v1 | N/A |
@@ -32,7 +32,7 @@
 | FL-5.1 | Keepsakes Modal Entry | FMEA-FL-005 | 84 | FIXED (Sprint 3) | NONE | none | Sprint 3 |
 | FL-5.2 | Category Selection | — | — | — | NONE | none | N/A |
 | FL-5.3 | Product & Style | DFMEA-FM-12, DFMEA-FM-16 | 42, 120 | Acceptable, FIXED (Sprint 2) | NONE | none | Sprint 2 (DFMEA-FM-16) |
-| FL-5.4 | Preview | DFMEA-FM-04, DFMEA-FM-11 | 40, 72 | Acceptable, Acceptable | printRobustness.test.js (partial) | none | N/A |
+| FL-5.4 | Preview | DFMEA-FM-04, DFMEA-FM-11, **FMEA-FL-025** | 40, 72, **126** | Acceptable, Acceptable, **Open** | printRobustness.test.js (partial) | none | N/A |
 | FL-6.1 | Basket Drawer | DFMEA-FM-14, DFMEA-FM-15 | 96, 30 | Monitor, Acceptable | addressValidation.test.js | none | N/A |
 | FL-6.2 | Stripe Checkout | DFMEA-FM-13 | 32 | Acceptable | NONE | none | N/A |
 | FL-6.3 | Order Success | FMEA-FL-003, FMEA-FL-022, FMEA-GAP-03 | 128, 45, 42 | FIXED (Sprint 0B), Open, Open | NONE | none | Sprint 0B (FL-003) |
@@ -198,6 +198,7 @@
 
 ### Pre-Sprint Fixes (3 items)
 
+
 | FMEA ID | Title | Original RPN | Post-Fix RPN | Files Changed | Sprint | Regression Test | What Regresses If Reverted |
 |---|---|---|---|---|---|---|---|
 | DFMEA-FM-07 | Photos persist in RAM after room close | 216 | — (mitigated) | desktop3: explicit `del` + `gc.collect()` on room close; photo bytes zeroed | Pre-sprint (2026-02-27) | NEEDS TEST | Photos remain in RAM after room close; GDPR violation risk |
@@ -260,6 +261,50 @@
 | FMEA-GAP-11 | Modal focus management | 210 | ~70 | Audit report created; 7 modals identified for useFocusTrap | gap11_focus_audit.md | Screen readers can't navigate modals; accessibility failure |
 | FMEA-GAP-04 | No mobile scroll test coverage | 144 | ~36 | desktop2/e2e/mobile-scroll.spec.js created | Playwright spec | Mobile scroll issues undetectable |
 
+### Post-Sprint — Platform Audit & Hardening
+
+#### Integration Gaps Fixed (10 items)
+
+| ID | Title | Files Changed | What It Fixed |
+|---|---|---|---|
+| GAP-1 | JWT tier token issuer created | desktop3 /auth/match-token + desktop6 tierToken.js | FamiliMatch tier enforcement had no token issuer |
+| GAP-2 | MATCH_TIER_SECRET documented | desktop7 .env.example | Secret not documented; new deploys would fail |
+| GAP-3 | Poker error card UI rendered | desktop4 AppLayout.jsx | Analysis errors had no visual feedback |
+| GAP-4 | Poker selectedGame defaults to null | desktop4 AppLayout.jsx | App launched into undefined game state |
+| GAP-5 | FeatureScanAnimation uses personBName | desktop6 SoloPage.jsx | Animation showed generic "Person B" instead of entered name |
+| GAP-6 | Poker PlansPage documented as non-functional | desktop4 | Plans page present but inert; now documented as known limitation |
+| GAP-7 | Dead event listener removed | desktop2 AppLayout.jsx | Orphaned event listener consuming resources |
+| GAP-8 | DeckCheckoutPage dead import removed | desktop2 AppRouter.jsx | Unused import; dead code |
+| GAP-9 | EngineStatusDot dead component deleted | desktop2 | Entire component unused; dead code |
+| GAP-10 | Desktop7 .env.example completed | desktop7 .env.example | Missing env vars for new deployments |
+
+#### Mobile Conversion Fixes (11 items)
+
+| Area | Fix | Files Changed |
+|---|---|---|
+| KeepsakesModal | Footer buttons enlarged to 44px minimum | desktop2 KeepsakesModal.jsx |
+| BasketDrawer | Remove button enlarged to 44px | desktop2 BasketDrawer.jsx |
+| BasketDrawer | Free users see "Upgrade to Plus" CTA instead of disabled button | desktop2 BasketDrawer.jsx |
+| HomePage | Event badges, product pills, footer links all 44px | desktop2 HomePage.jsx |
+| AppLayout | Consent modal buttons 44px | desktop2 AppLayout.jsx |
+| LandingPage (Match) | Illustration cards w-28 to w-24 | desktop6 LandingPage.jsx |
+| ResultsStory | Feature grid columns 80/80/40 to 60/60/32 | desktop6 ResultsStory.jsx |
+| ResultsPage | Chemistry matrix hidden on mobile | desktop6 ResultsPage.jsx |
+| SoloPage | Back button 44px, brand button 44px, person B input 44px | desktop6 SoloPage.jsx |
+| RoomPage | Brand button 44px | desktop6 RoomPage.jsx |
+| ShareCard | Responsive width | desktop6 ShareCard.jsx |
+
+#### Security Hardening (6 items)
+
+| Area | Fix | Details |
+|---|---|---|
+| Dashboard Auth | Moved to backend | POST /analytics/auth with session tokens; raw key no longer validated client-side |
+| Ambassador Rate Limiting | 3 requests per IP per hour | Prevents ambassador code abuse |
+| Ambassador Confirmation | 2-step confirmation flow | User must confirm before ambassador code is applied |
+| Dashboard Audit Logging | data/dashboard_access.log | All dashboard access attempts logged with timestamp, IP, success/fail |
+| Ambassador Audit Logging | data/ambassador_activity.log | All ambassador code usage logged |
+| Developer Codes | FAMILI-DEV-CEO, FAMILI-DEV-TEST added | Internal testing codes with audit trail |
+
 ---
 
 ## Section 4: Regression Prevention Layers
@@ -275,6 +320,7 @@
 | Check 2 | Frontend build (`npm run build`) — blocks on failure |
 | Check 3 | Backend tests (`python -m pytest tests/`) — blocks on failure |
 | Scope | Detects repo (desktop2, desktop3, desktop4, desktop6) and runs appropriate checks |
+| Installation Status | **Installed on desktop2, desktop4, desktop6** (Sprint 3 + post-sprint) |
 | Skip | `--no-verify` (discouraged; CLAUDE.md says never skip hooks) |
 
 ### Layer 2: CI/CD Pipelines (per repo)
@@ -283,8 +329,8 @@
 |---|---|---|---|
 | famililook-desktop2 | Pre-commit hook (FE tests + build) | Vercel auto-build on push to `production` branch | Merge `main` → `production` → push |
 | famililook-desktop3 | Pre-commit hook (BE pytest) | Hetzner (manual deploy) | Python backend |
-| famililook-desktop4 | Pre-commit hook (NOW INSTALLED) | Vercel auto-build | Hook installed Sprint 3 |
-| famililook-desktop6 | 51 FE tests (Sprint 2) | Vercel auto-build | Build restored (Sprint 0A); 51 tests added (Sprint 2) |
+| famililook-desktop4 | Pre-commit hook (FE tests + build) | Vercel auto-build | Hook installed Sprint 3 |
+| famililook-desktop6 | Pre-commit hook + verify.yml CI/CD | Vercel auto-build | Build restored (Sprint 0A); 51 tests (Sprint 2); verify.yml created post-sprint |
 | famililook-desktop7 | NONE documented | Hetzner | WebSocket backend for FamiliMatch |
 
 ### Layer 3: FMEA Regression Gate
@@ -292,7 +338,7 @@
 | Property | Value |
 |---|---|
 | Script | `scripts/check_fmea_regressions.py` |
-| Status | CREATED (Sprint 3) |
+| Status | CREATED (Sprint 3) — FMEA regression gate operational |
 | Notes | Validates fixed FMEA items have not regressed by running associated test markers. |
 
 ### Layer 4: Contract Schema Validation
@@ -304,6 +350,13 @@
 | card_deck_order.v1 | `contracts/card_deck_order.v1.schema.json` | Present | deckBuilder.test.js validates manifest structure |
 
 All three contract schema files are now present in the `contracts/` directory.
+
+### Layer 5: Security Audit Logging
+
+| Log File | Purpose | Contents |
+|---|---|---|
+| `data/dashboard_access.log` | Dashboard access audit trail | Timestamp, IP, auth result (success/fail), session ID |
+| `data/ambassador_activity.log` | Ambassador code usage trail | Timestamp, IP, code used, action, result |
 
 ---
 
@@ -328,6 +381,7 @@ Both former P0 Critical items have been FIXED:
 | FMEA-FP-002 | analysisMode context mismatch | 336 | Poker |
 | FMEA-FP-014 | PLANS constant duplicated | 180 | Poker |
 | FMEA-FP-005 | Plans page inert | 160 | Poker |
+| **FMEA-FL-025** | **Stale chunk error on keepsake template lazy imports** | **126** | **Look** |
 
 *13 former P1 items FIXED: FP-006 (Sprint 0B), FM-006 (Sprint 2), FL-004 (Sprint 0B), FP-003 (Sprint 0B), FL-002 (Sprint 1), DFMEA-FM-05 (Sprint 2), FL-003 (Sprint 0B), FL-024 (Sprint 1), FM-012 (Sprint 1), FL-009 (Sprint 1), DFMEA-FM-16 (Sprint 2), GAP-11 (Sprint 3), GAP-04 (Sprint 3).*
 
@@ -341,6 +395,7 @@ Both former P0 Critical items have been FIXED:
 | DFMEA-FM-14 | Prodigi dimension mismatch | 96 | Platform |
 | FMEA-GAP-12 | Attempt burned on failure | 90 | Look |
 | FMEA-FM-008 | Room 'done' blank card | 90 | Match |
+| **FMEA-FL-026** | **Analysis data lost on cancel/error — forced re-upload** | **80** | **Look** |
 | FMEA-FM-013 | Hardcoded morph 50/50 split | 80 | Match |
 | FMEA-FL-016 | COPPA detection not re-run | 80 | Look |
 | FMEA-GAP-08 | No room code expiry UX | 80 | Match |
@@ -430,14 +485,15 @@ Both former P0 Critical items have been FIXED:
 
 | Metric | Value |
 |---|---|
-| Total FMEA items | 95 |
-| Fixed/Mitigated/Implemented | 40 (42.1%) — 3 pre-sprint + 37 sprint fixes |
-| Acceptable (monitored) | 11 (11.6%) |
+| Total FMEA items | 97 |
+| Fixed/Mitigated/Implemented | 40 (41.2%) — 3 pre-sprint + 37 sprint fixes |
+| Post-Sprint Hardening | 27 additional fixes (10 integration gaps + 11 mobile conversion + 6 security) |
+| Acceptable (monitored) | 11 (11.3%) |
 | Open — P0 BLOCKING | 0 (0%) — all 6 resolved |
 | Open — P0 Critical | 0 (0%) — both resolved |
-| Open — P1 High | 3 (3.2%) |
-| Open — P2 Medium | 13 (13.7%) |
-| Open — P3 Low | 22 (23.2%) |
+| Open — P1 High | 4 (4.1%) — +1 FL-025 stale chunk |
+| Open — P2 Medium | 14 (14.4%) — +1 FL-026 data loss on cancel |
+| Open — P3 Low | 22 (22.7%) |
 | Items with regression tests | 3 (DFMEA-FM-09, FM-006 suite of 51, GAP-04 Playwright spec) |
 | Items needing regression tests | 92 (96.8%) |
 
@@ -453,6 +509,27 @@ Both former P0 Critical items have been FIXED:
 
 ---
 
-*End of Master Regression Prevention Matrix v2.0 — 2026-03-31*
-*Updated: 40 FMEA items fixed across Sprints 0A-3*
-*Next review: After Sprint 4 planning*
+## Section 7: UXD Sign-Off Status
+
+| Reviewer | Status | Notes |
+|---|---|---|
+| QA Lead | COMPLETE WITH EXCEPTIONS | 40 FMEA items fixed, 27 post-sprint hardening fixes applied. 5 exceptions tracked below. |
+| CMO | GREEN (Uno), YELLOW (Look/Match), RED (Poker) | Uno fully launched with QPMarkets. Look/Match need conversion work. Poker plans page non-functional. |
+| COO | CONDITIONAL SIGN OFF | 7-day monitoring period. Full sign-off target: 2026-04-07. |
+
+### Tracked Exceptions (5)
+
+| # | Exception | Owner | Target |
+|---|---|---|---|
+| 1 | A/B trail — no test coverage, no FMEA mapping | QA Lead | Backlog |
+| 2 | Pet UI — listed as "Coming Soon", no implementation timeline | Product | Backlog |
+| 3 | ShareCard URL — hardcoded share URL (FMEA-FM-015) | Engineering | P3 backlog |
+| 4 | Poker PlansPage — documented as non-functional (GAP-6, FMEA-FP-005/014) | Engineering | Poker merge (Option C) |
+| 5 | VITE_API_KEY — not yet set in Vercel dashboard for desktop2/4/6 | Operations | Operational task |
+
+---
+
+*End of Master Regression Prevention Matrix v3.0 — 2026-03-31*
+*Updated: 40 FMEA items fixed across Sprints 0A-3 + 27 post-sprint hardening fixes*
+*UXD sign-off: CONDITIONAL — 7-day monitoring, full sign-off 2026-04-07*
+*Next review: 2026-04-07 (end of monitoring period)*

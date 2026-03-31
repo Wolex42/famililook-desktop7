@@ -358,6 +358,42 @@ This Design Failure Mode and Effects Analysis (DFMEA) identifies potential failu
 
 ---
 
+### FL-025: Stale chunk error on keepsake template lazy imports
+
+| Attribute | Value |
+|-----------|-------|
+| **Function** | Load keepsake template components via React.lazy() in templateRegistry.js |
+| **Failure Mode** | After Vercel deploy, browser has cached page referencing old chunk hashes (e.g., `CertificateTemplate-D0Hcl63s.js`). Asset no longer exists — Vercel serves HTML fallback, causing MIME type error and "Failed to fetch dynamically imported module" crash. |
+| **Effect** | Keepsakes flow completely broken for any user with cached page. ErrorBoundary shows "Something went wrong" but "Try Again" just re-renders (doesn't reload), so user is stuck. Revenue-blocking: cannot preview or order keepsakes. |
+| **Cause** | `templateRegistry.js` uses bare `lazy()` for 30+ template imports. Only `AppRouter.jsx` uses `lazyWithReload()` wrapper (which auto-reloads on chunk failure). Templates are not covered by this protection. |
+| **Severity** | 7 (keepsakes completely inaccessible) |
+| **Occurrence** | 6 (every deploy affects all users with cached pages) |
+| **Detection** | 3 (user sees error immediately) |
+| **RPN** | **126** |
+| **Current Controls** | ErrorBoundary catches the error but offers no effective recovery. `lazyWithReload()` exists but is only applied to route-level pages, not template registry. CSP also blocks inline scripts (secondary issue). |
+| **Recommended Action** | **ACTION REQUIRED (RPN > 100)**: (1) Wrap all `lazy()` calls in templateRegistry.js with `lazyWithReload()` or equivalent. (2) Improve ErrorBoundary to offer page reload, not just re-render. (3) Consider adding Vite manifest preload to detect stale chunks early. |
+| **Test Coverage** | NONE |
+
+---
+
+### FL-026: Analysis data lost on cancel/error — forced re-upload
+
+| Attribute | Value |
+|-----------|-------|
+| **Function** | Preserve analysis results across navigation and error recovery |
+| **Failure Mode** | When user hits any error (stale chunk, network, etc.) or cancels out of keepsakes modal, all analysis state is lost. User must re-upload photos and re-analyze from scratch. |
+| **Effect** | User loses all work — photos, analysis results, feature votes, winner determination. Must start over. High abandonment risk. |
+| **Cause** | Analysis results live only in React state (FamililookContext). No persistence to sessionStorage or localStorage. Any component unmount, error boundary reset, or navigation away destroys the data. |
+| **Severity** | 8 (all user work lost) |
+| **Occurrence** | 5 (any error, cancel, refresh, or accidental navigation) |
+| **Detection** | 2 (user notices immediately — back at upload screen) |
+| **RPN** | **80** |
+| **Current Controls** | None. FamililookContext holds ephemeral state only. ErrorBoundary reset clears everything. |
+| **Recommended Action** | Persist analysis results to sessionStorage after successful analysis. On app mount, check for existing results and restore state. Clear on explicit "New Analysis" action only. |
+| **Test Coverage** | NONE |
+
+---
+
 ## 4. RPN Summary
 
 | ID | Failure Mode | S | O | D | RPN | Status |
@@ -379,6 +415,8 @@ This Design Failure Mode and Effects Analysis (DFMEA) identifies potential failu
 | FM-15 | Personalised message surcharge error | 5 | 2 | 3 | 30 | Acceptable |
 | **FM-16** | **Currency conversion price drift** | **6** | **4** | **5** | **120** | **ACTION REQUIRED** |
 | FM-17 | ~~Parent-parent comparison shown~~ | 6 | ~~7~~ 1 | 2 | ~~84~~ **12** | **MITIGATED** (2026-03-08) — couple gate + label gate |
+| **FL-025** | **Stale chunk error on keepsake templates** | **7** | **6** | **3** | **126** | **ACTION REQUIRED** |
+| **FL-026** | **Analysis data lost on cancel/error** | **8** | **5** | **2** | **80** | **Open** |
 
 ### Action Items (RPN > 100)
 
@@ -388,6 +426,8 @@ This Design Failure Mode and Effects Analysis (DFMEA) identifies potential failu
 | P1 | FM-07 | Explicit photo byte deletion + `gc.collect()` on room close | Dev | **DONE (2026-02-27)** |
 | P1 | FM-05 | Auto-reconnection with room rejoin + upload retry | Dev | NOT STARTED |
 | P1 | FM-16 | Add currency disclaimer or live rate fetching | Dev | NOT STARTED |
+| P1 | FL-025 | Wrap templateRegistry lazy imports with lazyWithReload + improve ErrorBoundary reload | FE Lead | NOT STARTED |
+| P2 | FL-026 | Persist analysis results to sessionStorage for recovery | FE Lead | NOT STARTED |
 
 ---
 
