@@ -1,34 +1,11 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useMatchHistory } from '../hooks/useMatchHistory';
 import ShareCard from '../components/ShareCard';
+import { reversePortalTransition } from '../utils/portalTransition';
 
 const BRAND_HUB_URL = import.meta.env.VITE_BRAND_HUB_URL || 'http://localhost:5173';
 const FAMILIMATCH_GRADIENT = 'linear-gradient(145deg, #0a84ff 0%, #5e5ce6 100%)';
-
-function reversePortalTransition(gradient, onNavigate) {
-  const overlay = document.createElement('div');
-  Object.assign(overlay.style, {
-    position: 'fixed', inset: '0', zIndex: '9999', pointerEvents: 'none',
-    background: `radial-gradient(ellipse at 50% 44%, rgba(255,255,255,0.16) 0%, transparent 62%), ${gradient}`,
-    opacity: '0', transform: 'scale(1)', borderRadius: '0',
-    willChange: 'opacity, transform, border-radius',
-    transition: 'opacity 0.12s ease',
-  });
-  document.body.appendChild(overlay);
-  requestAnimationFrame(() => requestAnimationFrame(() => { overlay.style.opacity = '1'; }));
-  setTimeout(() => {
-    Object.assign(overlay.style, {
-      transition: [
-        'opacity 0.4s ease-out',
-        'transform 0.45s cubic-bezier(0, 0, 0.6, 1)',
-        'border-radius 0.45s ease',
-      ].join(', '),
-      opacity: '0', transform: 'scale(0)', borderRadius: '50%',
-    });
-    setTimeout(() => { onNavigate(); setTimeout(() => overlay.remove(), 100); }, 430);
-  }, 120);
-}
-import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Zap, Camera, Lock, ChevronLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useConsent } from '../state/ConsentContext';

@@ -11,7 +11,8 @@
  * to set the X-Biometric-Consent header, so the stored shape must stay stable.
  */
 
-import { createContext, useContext, useState, useCallback, useMemo } from 'react';
+import { createContext, useContext, useState, useCallback, useMemo, useEffect } from 'react';
+import { analytics } from '../utils/analytics';
 
 const STORAGE_KEY = 'fl:bipa-consent';
 
@@ -41,6 +42,8 @@ export function ConsentProvider({ children }) {
     const next = { bipaConsented: true, timestamp: new Date().toISOString() };
     setConsent(next);
     saveConsent(next);
+    // FM-018: fire deferred session_start now that consent is confirmed
+    analytics.fireSessionStart();
   }, []);
 
   const revokeConsent = useCallback(() => {
@@ -48,6 +51,13 @@ export function ConsentProvider({ children }) {
     setConsent(next);
     saveConsent(next);
   }, []);
+
+  // FM-018: if consent was already granted (returning visitor), fire session_start on mount
+  useEffect(() => {
+    if (consent.bipaConsented) {
+      analytics.fireSessionStart();
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const value = useMemo(
     () => ({ consent, grantConsent, revokeConsent }),

@@ -23,6 +23,7 @@ vi.mock('../../src/utils/analytics', () => ({
     trackButtonClick: vi.fn(),
     trackModeSelected: vi.fn(),
     track: vi.fn(),
+    fireSessionStart: vi.fn(),
   },
 }));
 

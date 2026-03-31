@@ -1,8 +1,9 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ShieldCheck } from 'lucide-react';
 import { useConsent } from '../state/ConsentContext';
+import { useFocusTrap } from '../hooks/useFocusTrap.js';
 
 /**
  * ConsentModal — full-screen BIPA consent overlay for FamiliMatch.
@@ -13,6 +14,7 @@ import { useConsent } from '../state/ConsentContext';
 export default function ConsentModal({ onConsented }) {
   const navigate = useNavigate();
   const { grantConsent } = useConsent();
+  const trapRef = useFocusTrap(true);
 
   const handleAgree = useCallback(() => {
     grantConsent();
@@ -23,12 +25,23 @@ export default function ConsentModal({ onConsented }) {
     navigate('/');
   }, [navigate]);
 
+  // Escape key declines consent (GAP-11)
+  useEffect(() => {
+    const handleEsc = (e) => { if (e.key === 'Escape') handleDecline(); };
+    document.addEventListener('keydown', handleEsc);
+    return () => document.removeEventListener('keydown', handleEsc);
+  }, [handleDecline]);
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
       style={{ background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(12px)' }}
     >
       <motion.div
+        ref={trapRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Biometric Data Consent"
         initial={{ opacity: 0, scale: 0.92 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3, ease: 'easeOut' }}

@@ -1,32 +1,9 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { reversePortalTransition } from '../utils/portalTransition';
 
 const BRAND_HUB_URL = import.meta.env.VITE_BRAND_HUB_URL || 'http://localhost:5173';
 const FAMILIMATCH_GRADIENT = 'linear-gradient(145deg, #0a84ff 0%, #5e5ce6 100%)';
-
-function reversePortalTransition(gradient, onNavigate) {
-  const overlay = document.createElement('div');
-  Object.assign(overlay.style, {
-    position: 'fixed', inset: '0', zIndex: '9999', pointerEvents: 'none',
-    background: `radial-gradient(ellipse at 50% 44%, rgba(255,255,255,0.16) 0%, transparent 62%), ${gradient}`,
-    opacity: '0', transform: 'scale(1)', borderRadius: '0',
-    willChange: 'opacity, transform, border-radius',
-    transition: 'opacity 0.12s ease',
-  });
-  document.body.appendChild(overlay);
-  requestAnimationFrame(() => requestAnimationFrame(() => { overlay.style.opacity = '1'; }));
-  setTimeout(() => {
-    Object.assign(overlay.style, {
-      transition: [
-        'opacity 0.4s ease-out',
-        'transform 0.45s cubic-bezier(0, 0, 0.6, 1)',
-        'border-radius 0.45s ease',
-      ].join(', '),
-      opacity: '0', transform: 'scale(0)', borderRadius: '50%',
-    });
-    setTimeout(() => { onNavigate(); setTimeout(() => overlay.remove(), 100); }, 430);
-  }, 120);
-}
-import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Camera, ChevronLeft } from 'lucide-react';
 import { useMatch } from '../state/MatchContext';
@@ -37,6 +14,7 @@ import PhotoUpload from '../components/PhotoUpload';
 import ConsentModal from '../components/ConsentModal';
 import CountdownOverlay from '../components/CountdownOverlay';
 import ChatPanel from '../components/ChatPanel';
+import { analytics } from '../utils/analytics';
 
 // ── Waiting dots component ─────────────────────────────────────────
 function WaitingDots({ label }) {
@@ -93,6 +71,11 @@ export default function RoomPage() {
 
   const [phase, setPhase]           = useState('lobby');
   const [showConsent, setShowConsent] = useState(false);
+
+  // Track page view on mount
+  useEffect(() => {
+    analytics.trackPageView('room');
+  }, []);
 
   // React to server events
   useEffect(() => {
@@ -267,6 +250,18 @@ export default function RoomPage() {
                   step={connection.analyzing?.step}
                   progress={connection.analyzing?.progress}
                 />
+              )}
+
+              {/* DONE — loading spinner while results arrive */}
+              {phase === 'done' && (
+                <div className="flex flex-col items-center gap-4 py-10">
+                  <motion.div
+                    className="w-8 h-8 rounded-full border-2 border-violet-400 border-t-transparent"
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 0.8, repeat: Infinity, ease: 'linear' }}
+                  />
+                  <p className="text-sm font-semibold text-violet-300">Loading your results...</p>
+                </div>
               )}
             </motion.div>
           </AnimatePresence>

@@ -71,14 +71,22 @@ async function compareFacesDirect(blobA, blobB, nameA = 'Person A', nameB = 'Per
  * Create face morph via /face/morph.
  * Replicates: desktop2/src/game/FaceFusion/faceCompositor.js
  */
-async function createMorph(blobA, blobB) {
+async function createMorph(blobA, blobB, featureComparisons) {
   try {
     const fd = new FormData();
-    // Split features 50/50 between both people for a real blend
+    // Build fusion slots from comparison results:
+    // matched features come from face_a, unmatched from face_b
     const fusionSlots = {};
-    COMPARE_FEATURES.forEach((f, i) => {
-      fusionSlots[f] = i % 2 === 0 ? 'PersonA' : 'PersonB';
-    });
+    if (featureComparisons && featureComparisons.length > 0) {
+      featureComparisons.forEach((fc) => {
+        fusionSlots[fc.feature] = fc.match ? 'PersonA' : 'PersonB';
+      });
+    } else {
+      // Fallback: alternate 50/50 if no comparison data available
+      COMPARE_FEATURES.forEach((f, i) => {
+        fusionSlots[f] = i % 2 === 0 ? 'PersonA' : 'PersonB';
+      });
+    }
     fd.append('fusion_slots', JSON.stringify(fusionSlots));
     fd.append('output_size', '512');
     fd.append('face_PersonA', blobA, 'PersonA.jpg');
@@ -111,7 +119,7 @@ export async function compareSolo(photoA, photoB, onProgress, nameA = 'Person A'
 
   // Step 2: Face morph — the product differentiator
   onProgress?.('Creating fusion...', 80);
-  const fusionImage = await createMorph(blobA, blobB);
+  const fusionImage = await createMorph(blobA, blobB, result.feature_comparisons);
 
   onProgress?.('Done!', 100);
 

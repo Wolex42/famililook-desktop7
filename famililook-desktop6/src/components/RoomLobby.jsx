@@ -84,6 +84,10 @@ function RoomCodeDisplay({ code }) {
       <p className="text-xs text-white/25">
         {copied ? 'Copied!' : 'Tap to copy'}
       </p>
+      {/* GAP-08: Room code expiry notice */}
+      <p className="text-xs text-white/30 mt-1">
+        Code expires in 15 minutes
+      </p>
     </div>
   );
 }
@@ -99,10 +103,18 @@ export default function RoomLobby({ connection, onRoomReady }) {
     playerId,
     isHost,
     players,
+    error,
     connect,
     createRoom,
     joinRoom,
   } = connection;
+
+  // GAP-08: Detect room-not-found / expired errors
+  const isRoomExpiredError = error && (
+    error.toLowerCase().includes('not found') ||
+    error.toLowerCase().includes('expired') ||
+    error.toLowerCase().includes('invalid room')
+  );
 
   const isGroup = mode === 'group';
   const minPlayers = isGroup ? MIN_PLAYERS_GROUP : MIN_PLAYERS_DUO;
@@ -201,6 +213,18 @@ export default function RoomLobby({ connection, onRoomReady }) {
           style={{ minHeight: 44 }}
           autoFocus
         />
+
+        {/* GAP-08: Room expired / not found error message */}
+        {isRoomExpiredError && (
+          <div className="bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 text-sm text-red-300 text-center">
+            This room may have expired &mdash; ask the host to create a new one.
+          </div>
+        )}
+        {error && !isRoomExpiredError && (
+          <div className="bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 text-sm text-red-300 text-center">
+            {error}
+          </div>
+        )}
 
         <div className="flex gap-3">
           <button

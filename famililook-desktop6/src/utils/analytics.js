@@ -29,8 +29,16 @@ class Analytics {
     this.events = [];
     this.region = this.captureRegion();
     this.isReturning = this.detectReturningVisitor();
-    // Fire session_start after consent state has initialised
-    setTimeout(() => this.track('session_start', { isReturning: this.isReturning }), 0);
+    // FM-018: session_start is deferred until consent is confirmed.
+    // fireSessionStart() must be called explicitly after consent is granted.
+    this._sessionStartFired = false;
+  }
+
+  /** Call after consent is granted to fire the initial session_start event. */
+  fireSessionStart() {
+    if (this._sessionStartFired) return;
+    this._sessionStartFired = true;
+    this.track('session_start', { isReturning: this.isReturning });
   }
 
   getOrCreateVisitorId() {

@@ -6,7 +6,7 @@ import { useRef, useState, useCallback } from 'react';
 import { analytics } from '../utils/analytics';
 
 const MATCH_GRADIENT = 'linear-gradient(145deg, #0a84ff 0%, #5e5ce6 100%)';
-const SHARE_URL = 'https://famililook-desktop6.vercel.app';
+const SHARE_URL = import.meta.env.VITE_SHARE_URL || window.location.origin;
 
 function getInitials(name) {
   if (!name) return '?';
