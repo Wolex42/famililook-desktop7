@@ -254,7 +254,7 @@ export default function SoloPage() {
                 <FeatureScanAnimation
                   progress={progress || { step: 'Starting...', pct: 0 }}
                   nameA={userName || 'A'}
-                  nameB="B"
+                  nameB={personBName || 'B'}
                 />
               </motion.div>
             )}
