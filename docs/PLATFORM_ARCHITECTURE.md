@@ -1,7 +1,7 @@
 # FamiliLook Platform Architecture
 
-**Version:** 4.0
-**Date:** 2026-03-21 (updated from 2026-03-07)
+**Version:** 5.0
+**Date:** 2026-03-30 (updated from 2026-03-21)
 **Author:** Francis Aroyehun
 
 ---
@@ -208,7 +208,9 @@ For group (N people): all N×(N-1)/2 pairs are scored by desktop7, highest = win
 | **Core feature** | Facial compatibility — upload selfie(s), get chemistry score + face fusion + feature breakdown |
 | **Modes** | Solo (1 person, 2 photos), Duo (2 people, room + simultaneous reveal), Group (3–6 people, pairwise matrix) |
 | **Status** | desktop6: Solo/Duo/Group FE complete, 98 tests, build clean. desktop7: WebSocket server complete, 111 tests |
-| **Revenue** | Freemium (free comparisons, premium: unlimited + HD fusion + save/share) |
+| **Tier gating** | Solo = Free. Duo/Group = **Plus tier** (2026-03-28). Tier passed via `?tier=` URL param from Trail; locked cards show dimmed + lock icon + upgrade modal. Spoofable pre-revenue — real enforcement needs shared auth. |
+| **Match history** | `useMatchHistory.js` — localStorage-backed, max 20 entries (FIFO), stores scores + names only (no photos/biometrics) |
+| **Revenue** | Freemium — Solo free, Duo/Group require Plus tier. Premium: HD fusion + save/share |
 
 ### 3.4 FamiliUno (LIVE)
 
@@ -699,7 +701,9 @@ Headroom                      ~1.2 GB RAM
 |---------|------|--------|--------|
 | FamiliLook (desktop2) | Vercel | `production` | famililook.com |
 | FamiliPoker (desktop4) | Vercel | `production` | famililook-desktop4.vercel.app |
-| FamiliMatch (desktop6) | Vercel | `production` | famililook-desktop6.vercel.app |
+| FamiliMatch (desktop6) | Vercel | `production`* | famililook-desktop6.vercel.app |
+
+\* desktop6 has **no `vercel.json`** — configured via Vercel dashboard. Push both `main` and `production` branches to trigger deploy (2026-03-28: `production`-only push did NOT trigger build).
 
 ### 7.3 Scaling Path
 
@@ -889,7 +893,7 @@ Rates are hardcoded approximations. Stripe Adaptive Pricing handles actual conve
 - [x] 8-feature kinship analysis with calibrated labels
 - [x] 6 games (MemoryMatch, FeatureMatch, CardGame, FaceFusion, HungryHeads, FeatureCatch)
 - [x] Group photo snapshot (`/kinship/group-snapshot`)
-- [x] Analytics dashboard (`/dashboard?key=fl-admin-2026`)
+- [x] Analytics dashboard (`/dashboard` — SHA-256 auth gated)
 - [x] **Brand hub homepage** (famililook.com root → 4-tile product grid) — **LIVE** (2026-02-26)
 - [x] **Commerce layer** — Stripe checkout (single + basket), multi-currency (8 countries), personalised message surcharge
 - [x] **Prodigi integration** — keepsake ordering live, verified SKUs, webhook status tracking
@@ -943,11 +947,12 @@ Rates are hardcoded approximations. Stripe Adaptive Pricing handles actual conve
 | FeatureScanAnimation (3-phase analysis display) | Complete |
 | Face fusion integration | Complete (via /face/morph) |
 | Desktop6 FE tests | 98 passing |
+| **Duo/Group tier gating** (Plus required, URL param `?tier=`, upgrade modal) | **Done** (2026-03-28) — `LandingPage.jsx` MODE_CARDS + upgrade modal |
 | **Wire Solo to `/compare/faces`** (symmetric peer comparison, all scoring in backend) | **Done** — `matchClient.js` uses `POST /compare/faces`; contract frozen at `contracts/compare_faces.v1.schema.json` |
 | **Group photo scan mode** (upload one photo → detect all faces → pairwise compat) | **Planned** — distinct from /kinship/group-snapshot which is FamiliLook-only |
 | Sharing / screenshot of results | Not started |
 | Blind matching mode | Not started |
-| Match history (localStorage) | Not started |
+| Match history (localStorage) | **Done** — `useMatchHistory.js` (max 20 entries, FIFO, scores + names only) |
 
 ---
 

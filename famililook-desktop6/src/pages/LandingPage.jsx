@@ -154,18 +154,28 @@ export default function LandingPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { consent } = useConsent();
-  const { setMode } = useMatch();
+  const { setMode, setTierToken: setContextTierToken } = useMatch();
   const [showConsent, setShowConsent] = useState(false);
   const [pendingMode, setPendingMode] = useState(null);
   const [showUpgradeFor, setShowUpgradeFor] = useState(null);
   const count = useComparisonCount();
   const { history, clearHistory } = useMatchHistory();
 
-  // Tier from Trail URL param — default to free (Solo only) if absent
+  // Signed tier token from URL param — used for backend WebSocket auth
+  const tierToken = useMemo(() => searchParams.get('token') || '', [searchParams]);
+
+  // Derive display tier from token payload (base64 JSON before the dot)
   const userTier = useMemo(() => {
-    const t = searchParams.get('tier');
-    return (t && TIER_ORDER[t] !== undefined) ? t : 'free';
-  }, [searchParams]);
+    if (!tierToken) return 'free';
+    try {
+      const payloadB64 = tierToken.split('.')[0];
+      const payload = JSON.parse(atob(payloadB64));
+      const t = payload.tier;
+      return (t && TIER_ORDER[t] !== undefined) ? t : 'free';
+    } catch {
+      return 'free';
+    }
+  }, [tierToken]);
 
   const isLocked = useCallback((card) => {
     return (TIER_ORDER[card.requiredTier] ?? 0) > (TIER_ORDER[userTier] ?? 0);
@@ -181,10 +191,16 @@ export default function LandingPage() {
     if (!inboundMode) return;
     const card = MODE_CARDS.find(c => c.id === inboundMode);
     if (card && !isLocked(card)) {
+      if (!consent.bipaConsented) {
+        setPendingMode(card);
+        setShowConsent(true);
+        return;
+      }
       setMode(card.id);
+      setContextTierToken(tierToken);
       navigate(card.path, { replace: true });
     }
-  }, [searchParams, isLocked, setMode, navigate]);
+  }, [searchParams, isLocked, setMode, navigate, consent.bipaConsented]);
 
   const handleSelect = (card) => {
     if (isLocked(card)) {
@@ -198,6 +214,7 @@ export default function LandingPage() {
       return;
     }
     setMode(card.id);
+    setContextTierToken(tierToken);
     navigate(card.path);
   };
 
@@ -205,6 +222,7 @@ export default function LandingPage() {
     setShowConsent(false);
     if (pendingMode) {
       setMode(pendingMode.id);
+      setContextTierToken(tierToken);
       navigate(pendingMode.path);
     }
   };

@@ -1,0 +1,160 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://famililook/contracts/kinship_analyze.v1.schema.json",
+  "title": "Kinship Analyze v1",
+  "type": "object",
+  "required": [
+    "ok",
+    "schema_version",
+    "engineResult"
+  ],
+  "additionalProperties": true,
+  "properties": {
+    "ok": {
+      "type": "boolean"
+    },
+    "schema_version": {
+      "type": "string",
+      "const": "kinship_analyze.v1"
+    },
+    "engineResult": {
+      "$ref": "#/$defs/engineResult"
+    }
+  },
+  "$defs": {
+    "engineResult": {
+      "type": "object",
+      "required": [
+        "mode",
+        "parents",
+        "children"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "mode": {
+          "type": "string"
+        },
+        "parents": {
+          "type": "object",
+          "required": [
+            "parent1",
+            "parent2"
+          ],
+          "additionalProperties": true,
+          "properties": {
+            "parent1": {
+              "$ref": "#/$defs/parent"
+            },
+            "parent2": {
+              "$ref": "#/$defs/parent"
+            }
+          }
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/child"
+          }
+        }
+      }
+    },
+    "parent": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "attributes": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": true
+        }
+      }
+    },
+    "child": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "metrics": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": true
+        },
+        "inheritance": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": true,
+          "properties": {
+            "winner": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "enum": [
+                "parent1",
+                "parent2",
+                "blend",
+                "unknown",
+                null
+              ]
+            },
+            "winner_reason": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "tie_break": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "additionalProperties": true
+            }
+          }
+        },
+        "features": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": true,
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "ok",
+                "unavailable",
+                "partial",
+                "error"
+              ]
+            }
+          }
+        },
+        "feature_analysis": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": true
+        }
+      }
+    }
+  }
+}

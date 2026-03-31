@@ -249,6 +249,28 @@ export default function SoloPage() {
               </motion.div>
             )}
 
+            {/* ── ERROR PHASE ── */}
+            {error && !analyzing && !results && (
+              <motion.div
+                key="error"
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="flex flex-col items-center gap-4 p-6 rounded-2xl"
+                style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)' }}
+              >
+                <p className="text-red-400 text-center font-medium">{error}</p>
+                <button
+                  onClick={() => { setError(null); }}
+                  className="px-6 py-3 rounded-xl font-semibold text-white"
+                  style={{ background: 'linear-gradient(135deg, #0a84ff, #5e5ce6)', minHeight: 44 }}
+                >
+                  Try Again
+                </button>
+              </motion.div>
+            )}
+
             {/* ── RESULTS PHASE ── */}
             {results && !analyzing && (
               <motion.div

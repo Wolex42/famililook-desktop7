@@ -317,6 +317,7 @@ Why: In dev mode, `ConsentBanner.jsx` returns `null` (line 13), so `fl:consent` 
 4. **Backend permission** - Ask before .py files
 5. **Documents only** - All git operations from `C:\Users\wole\Documents\FML`
 6. **Verify before stating** - Read memory files before citing status
+7. **No regression** - No change may break existing navigation, touch targets, consent flows, or any fixed functionality. Only the CEO can authorise breaking changes. After ANY edit, verify existing behaviour still works.
 
 ---
 
