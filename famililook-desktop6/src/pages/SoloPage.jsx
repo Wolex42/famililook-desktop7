@@ -138,7 +138,7 @@ export default function SoloPage() {
             style={{
               display: 'flex', alignItems: 'center', gap: '8px',
               background: 'none', border: 'none', cursor: 'pointer',
-              color: '#ffffff', padding: 0,
+              color: '#ffffff', padding: 0, minHeight: '44px',
             }}
           >
             <ChevronLeft size={20} color="rgba(255,255,255,0.6)" />
@@ -158,7 +158,7 @@ export default function SoloPage() {
           </button>
           <button
             onClick={() => navigate('/')}
-            className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
+            className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors min-h-[44px] min-w-[44px] px-3 py-2"
           >
             <ArrowLeft size={18} /> Back
           </button>
@@ -201,7 +201,7 @@ export default function SoloPage() {
                       placeholder="Their name"
                       value={personBName}
                       onChange={(e) => setPersonBName(e.target.value)}
-                      className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                      className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-blue-500 min-h-[44px]"
                     />
                   </div>
                 </div>

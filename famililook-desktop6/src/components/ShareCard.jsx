@@ -72,7 +72,7 @@ export default function ShareCard({ result, onClose }) {
       <div
         ref={cardRef}
         style={{
-          width: 320, padding: 32,
+          maxWidth: 320, width: '100%', padding: 32,
           background: '#0a0a0a',
           borderRadius: 24,
           border: `2px solid ${chemistry_color || '#5e5ce6'}40`,

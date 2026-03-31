@@ -212,7 +212,7 @@ function FeatureBreakdownSlide({ featureComparisons, nameA, nameB }) {
         </p>
         <div className="space-y-1">
           {/* Header */}
-          <div className="grid grid-cols-[1fr_80px_80px_40px] gap-2 px-3 py-2 text-xs text-white/30">
+          <div className="grid grid-cols-[1fr_60px_60px_32px] gap-2 px-3 py-2 text-xs text-white/30">
             <span>Feature</span>
             <span className="text-center">{nameA}</span>
             <span className="text-center">{nameB}</span>
@@ -222,7 +222,7 @@ function FeatureBreakdownSlide({ featureComparisons, nameA, nameB }) {
           {(featureComparisons || []).map((fc) => (
             <div
               key={fc.feature}
-              className={`grid grid-cols-[1fr_80px_80px_40px] gap-2 px-3 py-2 rounded-lg text-xs ${
+              className={`grid grid-cols-[1fr_60px_60px_32px] gap-2 px-3 py-2 rounded-lg text-xs ${
                 fc.match ? 'bg-green-500/5' : 'bg-white/[0.02]'
               }`}
             >

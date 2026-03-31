@@ -167,7 +167,7 @@ export default function RoomPage() {
               style={{
                 display: 'flex', alignItems: 'center', gap: '8px',
                 background: 'none', border: 'none', cursor: 'pointer',
-                color: '#ffffff', padding: 0,
+                color: '#ffffff', padding: 0, minHeight: '44px',
               }}
             >
               <ChevronLeft size={20} color="rgba(255,255,255,0.6)" />

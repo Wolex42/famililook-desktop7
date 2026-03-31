@@ -43,11 +43,11 @@ function ChemistryMatrix({ results }) {
   });
 
   return (
-    <div className="w-full overflow-x-auto">
+    <div className="w-full">
       <p className="text-xs text-white/40 uppercase tracking-wider text-center mb-4">
         Chemistry Matrix
       </p>
-      <table className="w-full border-collapse text-xs">
+      <table className="w-full border-collapse text-xs hidden sm:table">
         <thead>
           <tr>
             <th className="p-2 text-white/30 text-left" />

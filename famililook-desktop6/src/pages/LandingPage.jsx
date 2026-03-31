@@ -239,7 +239,7 @@ export default function LandingPage() {
           style={{
             display: 'flex', alignItems: 'center', gap: '8px',
             background: 'none', border: 'none', cursor: 'pointer',
-            color: '#ffffff', padding: 0,
+            color: '#ffffff', padding: 0, minHeight: '44px',
           }}
         >
           <ChevronLeft size={20} color="rgba(255,255,255,0.6)" />
@@ -305,14 +305,14 @@ export default function LandingPage() {
           {['A', 'B'].map((letter) => (
             <div
               key={letter}
-              className="w-28 h-28 rounded-2xl flex items-center justify-center border border-violet-500/20"
+              className="w-24 h-24 rounded-2xl flex items-center justify-center border border-violet-500/20"
               style={{ background: 'rgba(139,92,246,0.08)' }}
             >
               <User size={36} className="text-violet-400/40" />
             </div>
           ))}
           <div
-            className="w-28 h-28 rounded-2xl flex flex-col items-center justify-center border border-pink-500/20 gap-1"
+            className="w-24 h-24 rounded-2xl flex flex-col items-center justify-center border border-pink-500/20 gap-1"
             style={{ background: 'rgba(236,72,153,0.08)' }}
           >
             <Heart size={22} className="text-pink-400/50" />
@@ -460,8 +460,8 @@ export default function LandingPage() {
       </div>
 
       <div className="relative z-10 mt-12 flex gap-6 text-xs text-gray-700">
-        <a href="/privacy" className="hover:text-gray-500 transition-colors">Privacy</a>
-        <a href="/terms" className="hover:text-gray-500 transition-colors">Terms</a>
+        <a href="/privacy" className="hover:text-gray-500 transition-colors min-h-[44px] flex items-center px-3">Privacy</a>
+        <a href="/terms" className="hover:text-gray-500 transition-colors min-h-[44px] flex items-center px-3">Terms</a>
       </div>
 
       {showConsent && <ConsentModal onConsented={handleConsented} />}
