@@ -1,7 +1,7 @@
 # Master Regression Prevention Matrix
 
 **Document:** QA-MRM-001
-**Date:** 2026-03-31
+**Date:** 2026-04-01
 **Owner:** QA Lead
 **Status:** CURRENT — single source of truth for regression prevention
 **Sources:** UXD_all_products.md, FMEA_comprehensive.md, guardrails.json, contracts/*.schema.json, test_coverage.md
@@ -194,7 +194,7 @@
 
 ## Section 3: FMEA Fix Register — Fixed/Mitigated Items
 
-44 FMEA items are Fixed/Mitigated/Implemented (3 pre-sprint + 37 sprint fixes + 4 keepsake mobile fixes). The remaining 55 are Open or Acceptable.
+49 FMEA items are Fixed/Mitigated/Implemented (3 pre-sprint + 37 sprint fixes + 4 keepsake mobile fixes + 4 post-sprint bug fixes + 1 stale chunk fix). The remaining 57 are Open or Acceptable.
 
 ### Pre-Sprint Fixes (3 items)
 
@@ -303,6 +303,24 @@
 | FMEA-MOB-03 | Keepsakes modal wastes vertical space on mobile | 100 | ~15 | desktop2/KeepsakesModal.jsx (100dvh on mobile + pillbox step navigator) | NEEDS TEST | Modal uses small centered box; no backward step navigation |
 | FMEA-MOB-04 | Character mug wrong illustration for non-parent roles | 126 | ~12 | desktop2/normaliseParent.js (17 roles + multilingual aliases → 6 character types) | NEEDS TEST | Grandma/Son/Uncle etc. show wrong character illustration |
 
+#### Post-Sprint Bug Fixes (4 items)
+
+| FMEA ID | Title | Original RPN | Post-Fix RPN | Files Changed | Regression Test | What Regresses If Reverted |
+|---|---|---|---|---|---|---|
+| FMEA-MOB-09 | PlansPage missing useCallback import — crash | 90 | 0 | desktop2/PlansPage.jsx (useCallback added to React import line 1) | NEEDS TEST | /plans navigation crashes ErrorBoundary — page completely inaccessible |
+| FMEA-MOB-10 | KeepsakeCatalogue renders scrolled to bottom | 120 | ~12 | desktop2/KeepsakeCatalogue.jsx (useEffect scroll-to-top on mount) | NEEDS TEST | Keepsake catalogue shows blank screen on mobile — user must scroll up |
+| FMEA-MOB-11 | AppLayout children.length null crash risk | 105 | ~10 | desktop2/AppLayout.jsx (children?.length \|\| 0) | NEEDS TEST | Null children during lazy load transitions crashes component tree |
+| FMEA-MKF-001 | Kill switch silently breaks mobile keepsakes | 128 | ~16 | desktop2/isMobileKeepsakeFlow utility (kill switch check centralised) | NEEDS TEST | fl:disable-mobile-keepsakes silently disables keepsakes with no user feedback |
+
+#### Keepsake Product Quality Fixes (4 items)
+
+| FMEA ID | Title | Original RPN | Post-Fix RPN | Files Changed | Regression Test | What Regresses If Reverted |
+|---|---|---|---|---|---|---|
+| FMEA-KSK-01 | standard_card + card_deck not production-ready | 100 | 0 | desktop2/productCatalog.js, KeepsakeCatalogue.jsx (products removed) | NEEDS TEST | Non-production-ready products visible in catalogue |
+| FMEA-KSK-02 | Mug headline overflow — long names break layout | 126 | ~16 | desktop2/CharacterMug, CushionTemplate (MAX_HEADLINE_CHARS 35→28, safeName()) | NEEDS TEST | Long names overflow mug/cushion layouts |
+| FMEA-KSK-04 | Preview backing missing for transparent templates | 120 | ~12 | desktop2/KeepsakeCustomise, KeepsakePreview (#F7F6F4 background) | NEEDS TEST | Transparent PNG templates invisible on dark backgrounds |
+| FMEA-KSK-05 | Stale chunk errors on every deploy | 80 | 0 | desktop2/vercel.json (no-cache on /), lazyWithReload.js (cache-bust + never-resolving promise) | NEEDS TEST | Every deploy causes "Failed to fetch dynamically imported module" errors for cached users |
+
 #### Security Hardening (6 items)
 
 | Area | Fix | Details |
@@ -360,7 +378,27 @@
 
 All three contract schema files are now present in the `contracts/` directory.
 
-### Layer 5: Security Audit Logging
+### Layer 5: Blast Radius Scanning (Pre-Deploy)
+
+| Property | Value |
+|---|---|
+| Purpose | Before deploying any change, scan for missing imports, null reference risks, and downstream breakage |
+| Lesson learned | Sprint 4 edits added useCallback usage without updating imports (FMEA-MOB-09, RPN 90). Build passed but runtime crashed. |
+| Process | After any edit: (1) verify all new symbol references have matching imports, (2) check for null/undefined access on optional values, (3) test affected routes manually, (4) run full test suite |
+| Owner | QA Lead + FE Lead jointly |
+
+### Layer 6: Deployment Cache Headers
+
+| Property | Value |
+|---|---|
+| Purpose | Prevent stale chunk errors ("Failed to fetch dynamically imported module") after every Vercel deploy |
+| Root cause | Vite code-splits into hashed chunks. After deploy, old chunks are gone but users still have cached `index.html` pointing to them. Without `no-cache` on `index.html`, browsers serve the stale entry point and all lazy imports fail. |
+| Fix (server) | `vercel.json` sets `Cache-Control: no-cache, no-store, must-revalidate` on `/` (index.html). Hashed assets still cached normally. |
+| Fix (client) | `lazyWithReload.js` catches chunk load errors, cache-busts `?v=<timestamp>` on the import URL, and returns a never-resolving promise to let the page reload cleanly. |
+| Owner | FE Lead |
+| Repos affected | desktop2 (deployed), desktop4/desktop6 should adopt same pattern |
+
+### Layer 7: Security Audit Logging
 
 | Log File | Purpose | Contents |
 |---|---|---|
@@ -494,9 +532,9 @@ Both former P0 Critical items have been FIXED:
 
 | Metric | Value |
 |---|---|
-| Total FMEA items | 101 |
-| Fixed/Mitigated/Implemented | 44 (43.6%) — 3 pre-sprint + 37 sprint fixes + 4 keepsake mobile fixes |
-| Post-Sprint Hardening | 31 additional fixes (10 integration gaps + 11 mobile conversion + 6 security + 4 keepsake mobile) |
+| Total FMEA items | 106 |
+| Fixed/Mitigated/Implemented | 49 (46.2%) — 3 pre-sprint + 37 sprint fixes + 4 keepsake mobile fixes + 4 post-sprint bug fixes + 1 stale chunk fix (KSK-05) |
+| Post-Sprint Hardening | 36 additional fixes (10 integration gaps + 11 mobile conversion + 6 security + 4 keepsake mobile + 4 post-sprint bugs + 1 deployment cache) |
 | Acceptable (monitored) | 11 (10.9%) |
 | Open — P0 BLOCKING | 0 (0%) — all 6 resolved |
 | Open — P0 Critical | 0 (0%) — both resolved |
@@ -504,7 +542,7 @@ Both former P0 Critical items have been FIXED:
 | Open — P2 Medium | 14 (13.9%) — +1 FL-026 data loss on cancel |
 | Open — P3 Low | 22 (21.8%) |
 | Items with regression tests | 3 (DFMEA-FM-09, FM-006 suite of 51, GAP-04 Playwright spec) |
-| Items needing regression tests | 96 (96.0%) |
+| Items needing regression tests | 100 (95.2%) |
 
 ### Critical Gaps Summary
 
@@ -536,9 +574,18 @@ Both former P0 Critical items have been FIXED:
 | 4 | Poker PlansPage — documented as non-functional (GAP-6, FMEA-FP-005/014) | Engineering | Poker merge (Option C) |
 | 5 | VITE_API_KEY — not yet set in Vercel dashboard for desktop2/4/6 | Operations | Operational task |
 
+### Mobile Keepsake Redesign (Phase 1+2 Deployed — 2026-04-01)
+
+| Phase | Scope | Status |
+|---|---|---|
+| Phase 1 | Full-height modal, pillbox navigation, scroll-to-top, mug preview scaling, character role mapping | DEPLOYED |
+| Phase 2 | Mobile keepsake shopping experience (7 new files + 2 gate edits), kill switch centralisation, PlansPage crash fix, AppLayout null safety | DEPLOYED |
+| Notes | 8 FMEA items fixed (MOB-01 through MOB-11 + MKF-001). All keepsake flows verified on 375px mobile viewport. |
+
 ---
 
-*End of Master Regression Prevention Matrix v3.1 — 2026-03-31*
-*Updated: 44 FMEA items fixed across Sprints 0A-3 + 31 post-sprint hardening fixes (incl. 4 keepsake mobile)*
+*End of Master Regression Prevention Matrix v3.3 — 2026-04-01*
+*Updated: 48 FMEA items fixed across Sprints 0A-4D + 35 post-sprint hardening fixes (incl. 8 keepsake mobile + 4 post-sprint bugs)*
 *UXD sign-off: CONDITIONAL — 7-day monitoring, full sign-off 2026-04-07*
+*Mobile keepsake redesign: Phase 1+2 deployed 2026-04-01*
 *Next review: 2026-04-07 (end of monitoring period)*

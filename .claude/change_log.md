@@ -4,6 +4,73 @@ All changes must be logged here with validation status.
 
 ---
 
+## 2026-04-01 — Phase 2: Gate KeepsakesModal — mobile flow on phones, desktop modal on larger screens
+
+**Files changed:**
+- `famililook-desktop2/src/layout/MobileResultsSection.jsx` — Added imports for `KeepsakeMobileFlow` + `isMobileKeepsakeFlow`; gated `<KeepsakesModal>` render with conditional to show mobile flow on phones
+- `famililook-desktop2/src/layout/GroupSnapshotSection.jsx` — Same gate pattern for group pairwise keepsakes
+- `famililook-desktop2/src/components/keepsakes/mobile/KeepsakeMobileFlow.jsx` — Added `CHARACTER_MUG_STYLE_MAP` import, `isCharacterMug` helper, `resolvedRecipient`/`resolvedVariant` memos, and passed `recipient`/`variant`/`occasion` to hidden export template for character_mug products
+
+**Validation:** Build passes. No regressions — desktop flow unchanged, mobile flow activates only when `isMobileKeepsakeFlow()` returns true.
+
+---
+
+## 2026-04-01 — Option B: Mobile keepsake preview — progress bar + bottom sheet
+
+**Files changed:**
+- `famililook-desktop2/src/components/keepsakes/KeepsakesModal.jsx`
+
+**Changes:**
+1. **PillboxNav compact mode**: On mobile, replaced 50px pill buttons with thin progress dots (~20px) + step name text. Desktop unchanged.
+2. **Step 4 conditional rendering**: Age cards, style picker, recipient selector, variant toggle structurally removed from render tree on mobile via `{!isMobile && (...)}`. No `display: none` used.
+3. **Mobile style chip row**: Compact horizontal chip row with left/right arrows for style switching above preview on mobile.
+4. **Bottom sheet**: "Customise" button in action bar opens a 40vh bottom sheet with age chips, style picker, recipient, and variant options. Dismiss via overlay tap, X button, or Done button. Preview updates live.
+5. **Fixed action bar**: `position: "fixed"` on mobile (was `position: "sticky"`). Bottom padding spacer added to prevent content overlap.
+
+**Validation:** `validate_scope.py` = ALLOWED. 1090 tests pass. Build succeeds.
+
+---
+
+## 2026-03-31 — Memory Match onboarding text: multi-feature + age-appropriate
+
+**Files changed:**
+- `famililook-desktop2/src/game/MemoryMatch.jsx` (lines 1049-1063) — HOW TO PLAY instructions now branch on `Array.isArray(matchFeature)` and `ageGroup` for age-appropriate, multi-feature-aware text
+- `famililook-desktop2/src/game/AgeGroupSelector.jsx` (lines 172-195) — Pre-game description bullets updated for kids/teens/adults to mention feature matching and multi-feature difficulty scaling
+
+**Validation:** scope check passed, 1090 tests pass, build succeeds.
+
+---
+
+## 2026-03-31 | BUG FIX — Memory Match card count scales with difficulty
+
+**Description**: Fixed Memory Match game always producing only 4 cards (2 pairs) regardless of difficulty setting. Root cause: `initGame` picked a single feature and tried to fill all pairs from it, but with limited family data only ~2 groups shared a label.
+
+**Fix**: Rewrote pair-building logic to accumulate pairs across multiple features. Each feature contributes its cross-person groups, and pairs accumulate until the difficulty target (e.g. 8 pairs for teens/hard) is reached. Each card now carries a `matchFeature` field. The banner dynamically shows all active features with color-coded badges when multi-feature mode is active.
+
+**Files modified**:
+- `famililook-desktop2/src/game/MemoryMatch.jsx` — `initGame` rewrite + `FEATURE_COLORS` import + multi-feature banner
+
+**Validation**: `validate_scope.py` ALLOWED. 1090 tests pass. Build succeeds.
+
+---
+
+## 2026-03-31 | MOB-05/06/07/08 — Keepsake mobile failures fixed
+
+**Description**: Fixed 4 keepsake modal mobile failures documented from real device screenshots:
+1. **MOB-05 (RPN 90)**: Age style cards on Preview step pushed CTAs below fold. Fix: Hidden age/style selectors on mobile at Preview step (already accessible at Step 3/Style).
+2. **MOB-06 (RPN 80)**: Standard mug 3D mockup off-centre. Fix: Added `display: flex, justifyContent: center, alignItems: center` to mockup container.
+3. **MOB-07 (RPN 90)**: Action buttons lacked horizontal padding. Fix: Changed sticky footer from `padding: md 0` to `padding: md md` for proper horizontal spacing.
+4. **MOB-08 (RPN 84)**: Generic "Person N" / "Child N" labels on mugs. Fix: When label matches generic pattern, fall back to capitalised `role` field from photo entry (Son, Daughter, etc.).
+
+**Files modified**:
+- `famililook-desktop2/src/components/keepsakes/KeepsakesModal.jsx` — MOB-05, MOB-06, MOB-07
+- `famililook-desktop2/src/components/keepsakes/hooks/useKeepsakeData.js` — MOB-08
+- `famililook-desktop2/src/components/keepsakes/hooks/useFamilyKeepsakeData.js` — MOB-08
+
+**Validation**: 1090 tests pass, build succeeds.
+
+---
+
 ## 2026-03-31 | FMEA-FL-025 + FL-026 — Code fixes applied
 
 **Description**: Implemented fixes for both FMEA items:
