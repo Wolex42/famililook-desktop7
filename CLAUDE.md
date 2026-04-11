@@ -281,7 +281,7 @@ desktop2 is the canonical version reference for all shared frontend dependencies
 |---------|------------------|-----------------|-----------------|--------|
 | react | ^18.3.1 | ^18.3.1 ✅ | ^18.3.1 ✅ | — |
 | react-dom | ^18.3.1 | ^18.3.1 ✅ | ^18.3.1 ✅ | — |
-| react-router-dom | ^7.9.5 | ^7.9.5 ✅ | **^7.1.1 ❌** | Align desktop6 |
+| react-router-dom | ^7.9.5 | ^7.9.5 ✅ | ^7.9.5 ✅ | — |
 | framer-motion | ^12.34.3 | **^11.0.0 ❌** | **^11.0.0 ❌** | Align desktop4+6 |
 
 **Rules:**
