@@ -1,0 +1,19 @@
+{
+  "name": "@famililook/shared",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./infrastructure/AppErrorBus": "./src/infrastructure/AppErrorBus.js",
+    "./infrastructure/AppStorage": "./src/infrastructure/AppStorage.js",
+    "./infrastructure/resultsContract": "./src/infrastructure/resultsContract.js"
+  },
+  "peerDependencies": {
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0"
+  },
+  "devDependencies": {
+    "vitest": "^2.1.9",
+    "jsdom": "^25.0.1"
+  }
+}
