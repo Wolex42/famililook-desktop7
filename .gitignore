@@ -15,3 +15,8 @@ famililook-desktop4/
 famililook-desktop5/
 famililook-desktop6/
 famililook-desktop7/
+
+# Shared package build artifacts (consumed via file: symlinks)
+famililook-shared/node_modules/
+famililook-shared/package-lock.json
+famililook-game-engine/node_modules/
