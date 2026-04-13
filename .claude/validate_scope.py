@@ -72,6 +72,7 @@ BLOCKED_FRAGMENTS = (
 # Backend paths - require explicit approval
 BACKEND_PATHS = (
     "famililook-desktop3/",
+    "famililook-game-engine/",
     "app/",
     ".py",
 )
@@ -82,6 +83,7 @@ FRONTEND_ALLOWLIST = (
     "public/",
     "tests/",
     "e2e/",
+    "famililook-shared/",
 )
 
 # Ops reports - change audit trail (like ops_agents)
