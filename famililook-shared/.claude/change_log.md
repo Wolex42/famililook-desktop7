@@ -1,5 +1,16 @@
 # Change Log — famililook-shared
 
+## 2026-04-14 — AppStorage extraction (CR-SHARED-02)
+
+### CR-SHARED-02 — AppStorage extraction to famililook-shared
+**Description:** AppStorage.js (861 lines) and AppStorage.test.js (31 tests, 394 lines) copied verbatim from desktop2. Internal `./AppErrorBus` import resolves to sibling in shared package — zero source changes.
+**Context:** famililook-shared Phase 3. Second structural module. Desktop2 consumes via re-export shim.
+**Cross-repo impact:** desktop2 — re-export shim installed, test fix for module identity (4 dynamic imports), 1,444 tests passing, build PASS.
+**Risk Tier:** P2
+**Status:** COMPLETE
+
+---
+
 ## 2026-04-14 — AppErrorBus extraction (CR-SHARED-01)
 
 ### CR-SHARED-01 — AppErrorBus extraction to famililook-shared
