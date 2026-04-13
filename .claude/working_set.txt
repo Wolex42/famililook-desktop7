@@ -1,0 +1,23 @@
+# Working Set — Pre-Relaunch Sprint
+# Updated: 2026-04-13
+# Note: validate_scope.py is ADVISORY ONLY. This file is for reference, not enforcement.
+# Enforcement is: diff preview + CEO approval + pre-commit hook.
+
+## Always allowed (governance files — never blocked)
+.claude/change_log.md
+.claude/working_set.txt
+Agent_1/crew/output/
+Agent_1/crew/agents/
+
+## Pre-relaunch sprint files (Items 1-10)
+famililook-desktop2/vercel.json
+famililook-desktop2/index.html
+famililook-desktop2/public/robots.txt
+famililook-desktop2/public/sitemap.xml
+famililook-desktop2/src/pages/HomePage.jsx
+famililook-desktop2/src/pages/HomePageOccasion.jsx
+famililook-desktop2/src/pages/BrandHubPage.jsx
+famililook-desktop2/src/pages/FamiliUnoPage.jsx
+famililook-desktop2/src/pages/VaultPreview.jsx
+famililook-desktop2/src/layout/AppLayout.jsx
+famililook-desktop2/.claude/change_log.md

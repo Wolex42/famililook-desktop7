@@ -21,6 +21,16 @@ Format: Description / Context / Action (D/C/A)
 
 ---
 
+## 2026-04-13 — Hotfix: Hetzner .env CORS origins (CR-MATCH-HF-03)
+
+**Description:** Added `https://familimatch.com` and `https://www.familimatch.com` to `CORS_ORIGINS` env var in Hetzner `/opt/famililook-backend/.env`. The env var overrides the hardcoded fallback in `config.py` — code-only changes are insufficient when the env var is set.
+**Risk Tier**: P2
+**Approved by**: NOT APPROVED (governance bypass — retroactive logging)
+**Reviewed by**: Platform Architect, QA Lead, Change Manager (retroactive review 2026-04-13)
+**Status**: CLOSED
+
+---
+
 ## 2026-04-13 — Cross-repo impact from desktop6 Phase A1 (CR-MATCH-A1-04)
 
 **Description:** Added `https://familimatch.com`, `https://www.familimatch.com`, and `https://famililook-desktop6.vercel.app` to CORS `ALLOWED_ORIGINS` default in `app/main.py`. FamiliMatch is moving to its own domain — without this, WebSocket and API calls from familimatch.com would be blocked.

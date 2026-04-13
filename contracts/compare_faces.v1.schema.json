@@ -1,0 +1,154 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://famililook/contracts/compare_faces.v1.schema.json",
+  "title": "Compare Faces v1 — Peer-to-Peer Compatibility Response",
+  "description": "Contract for POST /compare/faces. Symmetric face-to-face comparison. No kinship assumptions. This is the canonical analysis endpoint for FamiliMatch (Solo, Duo, Group). All scoring is backend-authoritative — frontend MUST NOT re-derive percentage, chemistry_label, or feature_comparisons.",
+  "type": "object",
+  "required": [
+    "ok",
+    "percentage",
+    "chemistry_label",
+    "chemistry_color",
+    "embedding_similarity",
+    "feature_similarity",
+    "feature_comparisons",
+    "shared_features",
+    "name_a",
+    "name_b"
+  ],
+  "additionalProperties": true,
+  "properties": {
+    "ok": {
+      "type": "boolean",
+      "const": true,
+      "description": "Always true on success. Errors use HTTP 4xx/5xx instead."
+    },
+    "percentage": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Blended compatibility score as a percentage. Formula: round((0.6 * embedding_sim + 0.4 * feature_sim) * 100). Clamped to [0, 100]."
+    },
+    "chemistry_label": {
+      "type": "string",
+      "enum": [
+        "Feature Twins",
+        "Magnetic Match",
+        "Complementary Pair",
+        "Interesting Contrast",
+        "Opposites Attract"
+      ],
+      "description": "Human-readable compatibility tier. Derived from percentage: ≥85 Feature Twins, ≥70 Magnetic Match, ≥55 Complementary Pair, ≥40 Interesting Contrast, 0+ Opposites Attract."
+    },
+    "chemistry_color": {
+      "type": "string",
+      "enum": [
+        "#FFD700",
+        "#8B5CF6",
+        "#3B82F6",
+        "#14B8A6",
+        "#F97316"
+      ],
+      "description": "Hex colour paired with chemistry_label. Consistent with CHEMISTRY_LABELS in main.py."
+    },
+    "embedding_similarity": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "description": "Symmetric cosine similarity of face embeddings, normalised to [0,1] via (1 + cosine) / 2. Contributes 60% of the final score."
+    },
+    "feature_similarity": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "description": "Fraction of the 8 calibrated feature labels that match between face_a and face_b. Contributes 40% of the final score."
+    },
+    "feature_comparisons": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "description": "Exactly 8 feature comparisons, one per facial feature. Order matches _PEER_FEATURES: eyes, eyebrows, smile, nose, face_shape, skin, hair, ears.",
+      "items": {
+        "$ref": "#/$defs/featureComparison"
+      }
+    },
+    "shared_features": {
+      "type": "array",
+      "description": "Feature keys where label_a == label_b (case-insensitive). Subset of the 8 feature keys.",
+      "items": {
+        "$ref": "#/$defs/featureKey"
+      },
+      "uniqueItems": true
+    },
+    "calibrated_a": {
+      "type": "object",
+      "description": "Full calibrated feature output for face_a from calibrate_all_features(). May be empty if calibration unavailable.",
+      "additionalProperties": true
+    },
+    "calibrated_b": {
+      "type": "object",
+      "description": "Full calibrated feature output for face_b from calibrate_all_features(). May be empty if calibration unavailable.",
+      "additionalProperties": true
+    },
+    "name_a": {
+      "type": "string",
+      "description": "Display name for face_a. Defaults to 'Person A' if not provided."
+    },
+    "name_b": {
+      "type": "string",
+      "description": "Display name for face_b. Defaults to 'Person B' if not provided."
+    }
+  },
+  "$defs": {
+    "featureKey": {
+      "type": "string",
+      "enum": ["eyes", "eyebrows", "smile", "nose", "face_shape", "skin", "hair", "ears"],
+      "description": "One of the 8 standardised facial feature keys."
+    },
+    "featureComparison": {
+      "type": "object",
+      "required": ["feature", "label_a", "label_b", "match"],
+      "additionalProperties": false,
+      "properties": {
+        "feature": {
+          "$ref": "#/$defs/featureKey"
+        },
+        "label_a": {
+          "type": "string",
+          "description": "Calibrated display label for face_a. 'Unknown' if calibration unavailable."
+        },
+        "label_b": {
+          "type": "string",
+          "description": "Calibrated display label for face_b. 'Unknown' if calibration unavailable."
+        },
+        "match": {
+          "type": "boolean",
+          "description": "True if label_a == label_b (case-insensitive) and both are non-empty non-Unknown values."
+        }
+      }
+    }
+  },
+  "_governance": {
+    "contract_version": "compare_faces.v1",
+    "introduced": "2026-02-26",
+    "status": "FROZEN",
+    "owned_by": "desktop3 /compare/faces (app/main.py)",
+    "consumed_by": ["famililook-desktop6/src/api/matchClient.js"],
+    "invariants": [
+      "feature_comparisons always has exactly 8 entries",
+      "percentage is integer in [0, 100]",
+      "embedding_similarity and feature_similarity are floats in [0.0, 1.0]",
+      "shared_features is a subset of the 8 feature keys",
+      "chemistry_label is consistent with percentage thresholds",
+      "score formula: 0.6 * embedding_sim + 0.4 * feature_sim",
+      "All inputs are from real face detection and embedding — no synthetic values",
+      "Symmetric: swapping face_a and face_b produces the same percentage"
+    ],
+    "must_not": [
+      "Frontend must NOT re-compute percentage from embedding/feature scores",
+      "Frontend must NOT call /kinship/analyze for FamiliMatch comparisons",
+      "Backend must NOT use parent/child framing for peer comparisons",
+      "No fabricated or placeholder values in any field"
+    ]
+  }
+}

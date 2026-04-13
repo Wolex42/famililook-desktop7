@@ -7,3 +7,16 @@ venv/
 dist/
 build/
 .pytest_cache/
+
+# Sub-repo working directories (managed by their own git)
+famililook-desktop2/
+famililook-desktop3/
+famililook-desktop4/
+famililook-desktop5/
+famililook-desktop6/
+famililook-desktop7/
+
+# Shared package build artifacts (consumed via file: symlinks)
+famililook-shared/node_modules/
+famililook-shared/package-lock.json
+famililook-game-engine/node_modules/
