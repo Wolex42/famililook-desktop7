@@ -1,5 +1,16 @@
 # Change Log — famililook-shared
 
+## 2026-04-14 — resultsContract extraction (CR-SHARED-03)
+
+### CR-SHARED-03 — resultsContract extraction to famililook-shared
+**Description:** resultsContract.js (365 lines) and resultsContract.test.js (45 tests, 401 lines) copied verbatim from desktop2. Zero internal dependencies — pure functions module, no AppErrorBus or AppStorage imports.
+**Context:** famililook-shared Phase 4. Third structural module. All three infrastructure modules now in shared package.
+**Cross-repo impact:** desktop2 — re-export shim installed (named + default exports), 1,444 tests passing, build PASS.
+**Risk Tier:** P2
+**Status:** COMPLETE
+
+---
+
 ## 2026-04-14 — AppStorage extraction (CR-SHARED-02)
 
 ### CR-SHARED-02 — AppStorage extraction to famililook-shared
