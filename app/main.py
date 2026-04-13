@@ -19,6 +19,7 @@ from .protocol import ClientMessageType, ServerMessageType, server_msg, error_ms
 from .rooms import RoomManager, Player
 from .desktop3_client import compare_faces, create_duo_morph
 from .consent import get_pending_consents
+from .challenges import router as challenges_router
 
 logger = logging.getLogger(__name__)
 
@@ -87,6 +88,7 @@ app.add_middleware(
 )
 
 app.state.room_manager = RoomManager()
+app.include_router(challenges_router)
 
 MAX_CONNECTIONS_PER_IP = int(os.getenv("MAX_CONNECTIONS_PER_IP", "10"))
 _connections_per_ip: dict[str, int] = {}
