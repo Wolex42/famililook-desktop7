@@ -1,0 +1,127 @@
+{
+  "$schema": "https://famililook.dev/schemas/guardrails.v1.json",
+  "version": "1.0.0",
+  "description": "Claude Code guardrails - User-focused quality gates",
+
+  "core_principle": {
+    "statement": "USER is the main focus",
+    "meaning": "Every change must be validated from user perspective via E2E testing",
+    "sign_off": "Developer must explicitly consent before any commit"
+  },
+
+  "product_requirements": {
+    "core_value": "Generate keepsake cards and game cards from family resemblance analysis",
+    "user_sees": [
+      "Winner declaration: 'Looks like Mum! (65%)'",
+      "8 feature breakdown with parent attribution",
+      "Personalized messages: 'I have Mum's almond-shaped eyes!'",
+      "Downloadable keepsake cards"
+    ]
+  },
+
+  "scope_control": {
+    "allowlist_dirs": {
+      "frontend": ["src", "public", "e2e", "tests"],
+      "backend": ["app", "server.py"],
+      "contracts": ["contracts", "docs"]
+    },
+    "backend_requires_permission": true,
+    "blocked_fragments": [
+      "node_modules", "dist", "build", ".git", "__pycache__",
+      ".env", ".pem", ".key", "credentials", "secret"
+    ]
+  },
+
+  "quality_gates": {
+    "mandatory_after_every_update": {
+      "e2e_regression": {
+        "command": "npx playwright test",
+        "purpose": "Verify user experience end-to-end",
+        "must_pass": true
+      },
+      "visual_verification": {
+        "description": "User must see correct results in browser",
+        "checks": [
+          "Winner displayed correctly",
+          "8 features shown with parent attribution",
+          "Percentages display correctly",
+          "Cards render properly"
+        ]
+      }
+    },
+    "developer_sign_off": {
+      "required_before_commit": true,
+      "consent_format": "Developer explicitly confirms changes are ready",
+      "never_auto_commit": true
+    }
+  },
+
+  "data_integrity": {
+    "be_provides_all_data": {
+      "winner": "parent1 | parent2 (never unknown/balanced)",
+      "parent_scores": "For percentage display",
+      "feature_votes": "All 8 features with parent attribution",
+      "feature_descriptions": "Rich data for card messages"
+    },
+    "fe_renders_be_data": {
+      "allowed": "Transform for display (format, template)",
+      "forbidden": "Compute/invent winner, percentages, or features"
+    },
+    "on_be_failure": "Show error to user, never fabricate results",
+    "real_face_metrics_only": "All analysis values must derive from actual face detection, embeddings, and attribute extraction. No synthetic, hardcoded, or fabricated values in any scoring field."
+  },
+
+  "contracts": {
+    "kinship_analyze_v1": {
+      "schema": "contracts/kinship_analyze.v1.schema.json",
+      "status": "FROZEN",
+      "used_by": ["famililook-desktop2"],
+      "endpoint": "POST /kinship/analyze",
+      "must_not_change": ["engineResult structure", "feature_votes keys", "winner enum values"]
+    },
+    "compare_faces_v1": {
+      "schema": "contracts/compare_faces.v1.schema.json",
+      "status": "FROZEN",
+      "used_by": ["famililook-desktop6"],
+      "endpoint": "POST /compare/faces",
+      "must_not_change": [
+        "feature_comparisons always has exactly 8 entries",
+        "score formula: 0.6 * embedding_sim + 0.4 * feature_sim",
+        "percentage is integer in [0, 100]",
+        "chemistry_label enum values and threshold mappings",
+        "shared_features must match feature_comparisons where match=true",
+        "All values derived from real face metrics only"
+      ],
+      "must_not_do": [
+        "Frontend must NOT call /kinship/analyze for FamiliMatch",
+        "Frontend must NOT re-compute percentage from raw scores",
+        "Backend must NOT use parent/child framing for peer comparisons",
+        "No synthetic or placeholder values in any response field"
+      ]
+    }
+  },
+
+  "invariants": [
+    "Winner always leans to a parent (never balanced) [kinship mode]",
+    "All 8 features have valid parent attribution [kinship mode]",
+    "Order-invariant analysis [kinship mode]",
+    "Rich feature data for card generation [kinship mode]",
+    "feature_comparisons.length === 8 always [compare_faces.v1]",
+    "Symmetry: score(A,B) === score(B,A) [compare_faces.v1]",
+    "All analysis values from real face metrics — no fabrication [all products]"
+  ],
+
+  "workflow": {
+    "before_any_change": [
+      "1. Read file(s) to be modified",
+      "2. Show diff preview",
+      "3. Get developer permission for backend changes"
+    ],
+    "after_any_change": [
+      "1. Run E2E regression tests",
+      "2. Visual verification in browser",
+      "3. Developer sign-off required",
+      "4. Only then: commit allowed"
+    ]
+  }
+}

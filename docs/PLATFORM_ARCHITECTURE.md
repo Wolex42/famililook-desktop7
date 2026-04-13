@@ -1,7 +1,7 @@
 # FamiliLook Platform Architecture
 
-**Version:** 5.0
-**Date:** 2026-03-30 (updated from 2026-03-21)
+**Version:** 7.0
+**Date:** 2026-04-13 (updated from 2026-04-05)
 **Author:** Francis Aroyehun
 
 ---
@@ -10,31 +10,37 @@
 
 Four products built on a shared face analysis engine. All ML inference runs through desktop3. The key architectural split is not between products — it is between the **two analysis modes** the engine can operate in. Each product also connects to external supplier APIs for its physical product layer.
 
-### Brand Hub Layout (famililook.com homepage)
+### Homepage Layout (famililook.com — redesigned April 2026)
+
+The homepage was redesigned for **product-led conversion** in April 2026, replacing the static 4-tile brand hub with an emotionally engaging, scroll-driven landing page.
 
 ```
-┌─────────────────────┬─────────────────────┐
-│                     │                     │
-│    FAMILILOOK       │    FAMILIUNO        │
-│   (top-left)        │   (top-right)       │
-│                     │                     │
-│  Family analysis    │  Physical Uno-      │
-│  6 card games       │  style card packs   │
-│  Keepsake prints    │  from your family   │
-│                     │  face analysis      │
-├─────────────────────┼─────────────────────┤
-│                     │                     │
-│    FAMILIPOKER      │    FAMILIMATCH      │
-│   (bottom-left)     │   (bottom-right)    │
-│                     │                     │
-│  Casino card games  │  Face compatibility │
-│  Feature Poker      │  Solo / Duo / Group │
-│  Feature 21         │  + face fusion      │
-│                     │                     │
-└─────────────────────┴─────────────────────┘
+┌───────────────────────────────────────────┐
+│  Rotating taglines + particle effects     │
+│  "I look 72% like Mum" result preview    │
+│  (8-feature inheritance breakdown)        │
+├───────────────────────────────────────────┤
+│  6 OCCASION CARDS                         │
+│  ┌──────┐ ┌──────┐ ┌──────┐              │
+│  │Father│ │Holi- │ │ Game │              │
+│  │'s Day│ │ day  │ │Night │              │
+│  └──────┘ └──────┘ └──────┘              │
+│  ┌──────┐ ┌──────┐ ┌──────┐              │
+│  │ New  │ │Birth-│ │ Just │              │
+│  │ Baby │ │ day  │ │Curio-│              │
+│  └──────┘ └──────┘ │ us   │              │
+│                     └──────┘              │
+│  Each card → /occasion/:id soft landing   │
+├───────────────────────────────────────────┤
+│  Trail pillbox                            │
+│  (FamiliLook · FamiliUno · FamiliPoker    │
+│   · FamiliMatch)                          │
+├───────────────────────────────────────────┤
+│  Email capture                            │
+└───────────────────────────────────────────┘
 ```
 
-The brand hub lives at **famililook.com** (desktop2 root route). Each tile navigates to the relevant product — FamiliLook and FamiliUno are within desktop2; FamiliPoker and FamiliMatch link to their own deployments.
+The homepage lives at **famililook.com** (desktop2 root route). Occasion cards link to soft landing pages at `/occasion/:id`. The trail pillbox navigates to the relevant product — FamiliLook and FamiliUno are within desktop2; FamiliPoker and FamiliMatch link to their own deployments.
 
 ### Engine and Product Map
 
@@ -63,6 +69,35 @@ The brand hub lives at **famililook.com** (desktop2 root route). Each tile navig
   → Prodigi    → Card API
 ```
 
+### Umbrella App Strategy
+
+All four products ship as a single Capacitor app with four tabs:
+
+```
+FamiliLook App (Capacitor — planned)
+├── Tab 1: FamiliLook  — analysis, keepsakes, trail (entry point)
+├── Tab 2: FamiliMatch — comparison, chemistry, social
+├── Tab 3: FamiliUno   — card games (unlocks after first analysis)
+└── Tab 4: FamiliPoker — multiplayer poker (Plus tier only)
+
+All tabs share:
+  @capacitor/camera      — face upload
+  @capacitor/status-bar  — status bar styling
+  @capacitor/app         — lifecycle events
+  famililook-shared      — UI kit, hooks, infrastructure
+```
+
+Status: NOT STARTED. Capacitor init is gated behind Mobile Solutions Architect assessment (TF.js WebGL compatibility, model loading in WKWebView).
+
+### Shared Packages (planned)
+
+| Package | Type | Location | Consumed by | Status |
+|---------|------|----------|-------------|--------|
+| famililook-shared | npm | `famililook-shared/` | desktop2, desktop4, desktop6 | NOT BUILT |
+| famililook-game-engine | pip | `famililook-game-engine/` | desktop5, desktop7 | NOT BUILT |
+
+famililook-shared will contain the three structural modules (AppErrorBus, AppStorage, resultsContract) currently in `famililook-desktop2/src/infrastructure/`, plus shared UI components, hooks, and theme tokens. famililook-game-engine will extract the WebSocket protocol envelope, room management, and reconnection logic currently duplicated across desktop5 and desktop7.
+
 **External API dependencies:**
 
 | Product | External API | Purpose | Status |
@@ -70,6 +105,7 @@ The brand hub lives at **famililook.com** (desktop2 root route). Each tile navig
 | FamiliLook | Prodigi Print API | Physical keepsake prints (mugs, framed cards, cushions, puzzles, T-shirts, etc.) | **LIVE** |
 | FamiliLook | Stripe Checkout | Payment processing (single + basket checkout, subscriptions) | **LIVE** |
 | FamiliUno | QPMarkets Card API | Physical Uno-style family card packs | **LIVE** (2026-03-26) |
+| FamiliLook | QPMarkets Card API | Greeting cards and postcards (print-on-demand) | **LIVE** (2026-04-04) |
 | FamiliPoker | TBD card provider | Physical card decks (premium upsell, future) | Planned |
 | All products | Analytics (internal) | Event tracking → desktop3 `/analytics/track` | LIVE |
 
@@ -181,7 +217,7 @@ For group (N people): all N×(N-1)/2 pairs are scored by desktop7, highest = win
 | **Upload types** | Individual (parent A + parent B + child), or single group photo |
 | **Digital products** | 6 card games using family face data (MemoryMatch, FeatureMatch, CardGame, FaceFusion, HungryHeads, FeatureCatch) |
 | **Physical products** | Keepsake prints via Prodigi (certificates, framed cards, mugs) — NOT card game packs (that is FamiliUno) |
-| **Status** | Production (Vercel + Hetzner). 1,022+ FE tests, 166+ BE tests. Commerce LIVE. |
+| **Status** | Production (Vercel + Hetzner). 1,444 FE tests, 173+ BE tests. Commerce LIVE. First revenue £54.97 (April 2026). |
 | **Revenue** | Free tier + Premium plans + Prodigi keepsake orders |
 
 ### 3.2 FamiliPoker (IN DEVELOPMENT)
@@ -193,7 +229,7 @@ For group (N people): all N×(N-1)/2 pairs are scored by desktop7, highest = win
 | **Analysis mode** | Kinship (deck generation only — host runs analysis before entering the casino) |
 | **Core feature** | Casino-style card games using family face data — Feature Poker, Feature 21 (Blackjack) |
 | **Secondary** | Multiplayer rooms, chip economy, tournament mode |
-| **Status** | desktop4: 463 unit tests, 42 e2e. desktop5: WebSocket server complete, 37 tests |
+| **Status** | desktop4: 463 unit tests, 42 e2e. desktop5: WebSocket server complete, 37 tests. Gated behind Plus subscription tier (April 2026). PlanGate component pending on desktop4. |
 | **Revenue** | In-app purchases (chip packs, card cosmetics, tournament entry) |
 
 **DECISION (2026-03-27):** FamiliPoker will be merged into desktop2 as `/poker` route. FamiliMatch stays independent at `match.famililook.com`. Session token pattern (`POST /session/create`) deferred to mobile app phase.
@@ -207,8 +243,8 @@ For group (N people): all N×(N-1)/2 pairs are scored by desktop7, highest = win
 | **Analysis mode** | Compatibility only |
 | **Core feature** | Facial compatibility — upload selfie(s), get chemistry score + face fusion + feature breakdown |
 | **Modes** | Solo (1 person, 2 photos), Duo (2 people, room + simultaneous reveal), Group (3–6 people, pairwise matrix) |
-| **Status** | desktop6: Solo/Duo/Group FE complete, 98 tests, build clean. desktop7: WebSocket server complete, 111 tests |
-| **Tier gating** | Solo = Free. Duo/Group = **Plus tier** (2026-03-28). Tier passed via `?tier=` URL param from Trail; locked cards show dimmed + lock icon + upgrade modal. Spoofable pre-revenue — real enforcement needs shared auth. |
+| **Status** | desktop6: Solo/Duo/Group FE complete, 51 tests, build clean. desktop7: WebSocket server complete, 111 tests |
+| **Tier gating** | Solo = Free. Duo/Group = **Plus tier** (2026-03-28). Tier passed via `X-Plan` header from desktop2; locked cards show dimmed + lock icon + upgrade modal. Server-side enforcement via IP rate limiting (April 2026). |
 | **Match history** | `useMatchHistory.js` — localStorage-backed, max 20 entries (FIFO), stores scores + names only (no photos/biometrics) |
 | **Revenue** | Freemium — Solo free, Duo/Group require Plus tier. Premium: HD fusion + save/share |
 
@@ -363,9 +399,29 @@ TrailHomePage.jsx (page)
 
 ---
 
+### 3.7 Occasion Landing Pages (BUILT — desktop2)
+
+| Attribute | Value |
+|-----------|-------|
+| **Repo** | desktop2 (FE) |
+| **Route** | `/occasion/:occasionId` |
+| **Purpose** | Soft landing page between homepage occasion cards and upload flow |
+| **Status** | **LIVE** (2026-04-04) |
+
+6 variants: fathers-day, holiday, game-night, new-baby, birthday, just-curious. Each shows:
+- Occasion tag badge + title + emotional subtitle
+- 4-step "how it works" with friendly copy ("Place your favourite photo here")
+- Result preview quote
+- Photo count + time estimate
+- Single CTA → existing upload flow with intent + product pre-select
+
+Navigation: back → home (`/`), forward → `/app?intent=X&product=Y&from=occasion`
+
+---
+
 ## 4. Shared Engine (desktop3)
 
-The analysis backend runs on Hetzner CPX22 (2 vCPU, 4 GB RAM, Helsinki). All three products call it; none of them duplicate ML logic.
+The analysis backend runs on Hetzner CPX22 (2 vCPU, 4 GB RAM, Helsinki). All three products call it; none of them duplicate ML logic. EnginePool: 4 engines with round-robin dispatch. MediaPipe → InsightFace crop retry fallback added April 2026. Feature-only comparison fallback for faces without embeddings. IP-based rate limiting enforced inside `/kinship/analyze` (returns 429 when limit exceeded).
 
 ```
                     desktop3 (Python FastAPI) — Port 8008
@@ -403,7 +459,10 @@ The analysis backend runs on Hetzner CPX22 (2 vCPU, 4 GB RAM, Helsinki). All thr
                     │  ├── POST /attributes                   │
                     │  ├── POST /cards/generate-deck          │
                     │  ├── POST /kinship/card-features        │
-                    │  └── GET  /analytics/*, /health         │
+                    │  ├── GET  /analytics/*, /health         │
+                    │  ├── GET  /rate-limit/status             │
+                    │  │   → IP-based rate limit check        │
+                    │  └── POST /payments/create-basket-checkout│
                     └─────────────────────────────────────────┘
 ```
 
@@ -427,6 +486,8 @@ The analysis backend runs on Hetzner CPX22 (2 vCPU, 4 GB RAM, Helsinki). All thr
 | `/payments/create-basket-checkout` | Yes | No | No |
 | `/webhooks/stripe` | Yes | No | No |
 | `/webhooks/print-status` | Yes | No | No |
+| `/rate-limit/status` | Yes | No | No |
+| `/payments/create-basket-checkout` | Yes | No | No |
 
 > **FamiliMatch uses `POST /compare/faces` for Solo and Duo mode.** The endpoint runs all ML inference inside desktop3: AdaFace embeddings, `calibrate_all_features()` for 8 calibrated feature labels per face, symmetric cosine similarity `(1 + cosine) / 2`, and blended scoring `0.6 · emb + 0.4 · feat`. An earlier design considered per-person `/detect` + `/embed` with client-side scoring — this was superseded by the dedicated endpoint, which is symmetric by construction and governed by a frozen contract (`contracts/compare_faces.v1.schema.json`). Group mode still uses per-person primitives orchestrated by desktop7 for the full N×(N-1)/2 pairwise matrix.
 
@@ -453,10 +514,18 @@ Caddy (api.famililook.com → :8008)
 desktop3 → kinship pipeline → 8-feature result + calibrated labels
     │
     ▼
-Browser stores in localStorage:
+Browser stores via AppStorage (canonical persistence layer):
     fl:familyData     → inheritance results
     fl:thumbnails     → face crops (base64)
     fl:deck           → card deck for games
+    (All access via AppStorage.get/set — no raw localStorage calls)
+    │
+    ▼
+resultsContract.js (canonical results logic):
+    getWinner()           → normalised winner from backend
+    extractFeatureVotes() → 8-feature vote map
+    getPercentages()      → display percentages with 50/50 nudge
+    buildResultsSummary() → complete display-ready summary
     │
     ▼
 6 Games: MemoryMatch, FeatureMatch, CardGame, FaceFusion, HungryHeads, FeatureCatch
@@ -467,7 +536,7 @@ FamiliLook keepsakes (Prodigi): certificates, framed photos, mugs
 FamiliUno card ordering (Card Supplier API): full Uno-style physical card game set
 ```
 
-**Key invariants enforced here:** 8 features, 5-3 winner rule, no 50/50, order-invariant.
+**Key invariants enforced here:** 8 features, 5-3 winner rule, no 50/50, order-invariant. All enforced via `resultsContract.js` — the single canonical source for winner determination, percentage calculation, and feature vote extraction. No consumer file may re-derive these values.
 
 **FamiliUno deck button in results carousel:** Each child result card in `MobileResultsCarousel` includes a "Play FamiliUno" button that navigates to `/uno?from=results` with all family data loaded. This is the primary cross-sell entry point from kinship results into the card ordering flow.
 
@@ -741,15 +810,15 @@ FamiliMatch (Compatibility):
 | Data | Browser localStorage | Server RAM (transient) | Server Disk |
 |------|:-------------------:|:---------------------:|:-----------:|
 | Raw photos | No | During analysis only | Never |
-| Thumbnails (base64) | FamiliLook only | During game room | Never |
-| Feature labels | FamiliLook (fl:familyData) | During room | Never |
+| Thumbnails (base64) | FamiliLook only (via AppStorage) | During game room | Never |
+| Feature labels | FamiliLook (fl:familyData via AppStorage) | During room | Never |
 | Embeddings | Never | During analysis only | Never |
-| Card deck | FamiliLook (fl:deck) | During game room | Never |
+| Card deck | FamiliLook (fl:deck via AppStorage) | During game room | Never |
 | Fusion image | Shown in UI only | Generated on request | Never |
 | Compatibility score | FamiliMatch: UI only | During room | Never |
 | Analytics events | No | No | JSONL (anonymised) |
 
-**COPPA 13+ age gate:** A `CoppaAgeGate` component (in `AgeGateModal.jsx`) fires before the first photo upload across all products. Confirmation is stored in localStorage (`fl:age-confirmed-13`). This gates all biometric processing — no face analysis endpoints are called until the user confirms they are 13 or older.
+**COPPA 13+ age gate:** A `CoppaAgeGate` component (in `AgeGateModal.jsx`) fires before the first photo upload across all products. Confirmation is stored via AppStorage (`fl:age-confirmed-13`). This gates all biometric processing — no face analysis endpoints are called until the user confirms they are 13 or older.
 
 **GDPR forget-me endpoint:** `POST /data/forget-me` covers 6 data stores: gallery (cleared), analytics (IP hash purge), feedback (IP + email purge), subscribers (email purge), orders (anonymised for UK tax retention), and ambassador grants (email purge). This is the single endpoint for full GDPR right-to-erasure compliance.
 
@@ -763,13 +832,13 @@ FamiliMatch (Compatibility):
 Browser (desktop2)
     |
     |-- KeepsakesModal.jsx -----> Template Preview (live render)
-    |       |                      |-- useKeepsakeData() (single child)
-    |       |                      |-- useFamilyKeepsakeData() (all children)
+    |       |                      |-- useKeepsakeData() → resultsContract (single child)
+    |       |                      |-- useFamilyKeepsakeData() → resultsContract (all children)
     |       |                      |-- usePersonalizedMessage() (LLM)
     |       |
     |-- BasketContext.jsx -------> Multi-item cart (localStorage fl:basket)
     |-- CurrencyContext.jsx -----> 8 countries, formatPrice()
-    |-- BasketDrawer.jsx --------> Checkout UI (shipping + Stripe)
+    |-- BasketDrawer.jsx --------> Checkout UI (name, email, address, city, postcode, country + Stripe)
     |-- OrderModal.jsx ----------> Single-item Stripe checkout
     |
     v
@@ -797,6 +866,11 @@ POST /orders/keepsake (desktop3 → Prodigi)
 POST /webhooks/print-status (Prodigi → desktop3)
     |-- HMAC signature verification
     |-- Updates order status in DB
+
+Revenue tracking: trackOrderInitiated + trackOrderCompleted with actual prices
+orders_data/ persisted as Docker volume (fixed April 2026)
+Email field added to checkout flow (required by QPMarkets, April 2026)
+"Keepsake" rebranded to "treasure" in all user-facing copy (April 2026)
 ```
 
 ### 9.2 Keepsake Template System
@@ -828,12 +902,12 @@ printExport.js ─── HTML-to-PNG export pipeline
 | Product | Price (GBP) | Prodigi SKU | Template | Family Data? |
 |---------|-------------|-------------|----------|:------------:|
 | Fine Art Print (8x10) | 9.99 | GLOBAL-FAP-8X10 | KeepsakeCertificate | No |
-| Fine Art Print (16x20) | 19.99 | GLOBAL-FAP-16x20 | KeepsakeCertificate | No |
+| Fine Art Print (16x20) | 24.99 | GLOBAL-FAP-16x20 | KeepsakeCertificate | No |
 | Framed Canvas (12x16) | 34.99 | GLOBAL-FRA-SLIMCAN-12x16 | KeepsakeCertificate | No |
 | Ceramic Mug | 14.99 | GLOBAL-MUG-W | MugTimelineTemplate | No |
 | Family Mug Set | 27.99 | GLOBAL-MUG-W (x2) | FamilyMugTemplate | **Yes** |
 | T-Shirt | 19.99 | GLOBAL-TEE-GIL-5000 | — | No |
-| ~~Baby Bodysuit~~ | ~~14.99~~ | ~~GLOBAL-TEE-GIL-5000~~ | — | **Removed** |
+| Baby Bodysuit | 19.99 | GLOBAL-TEE-GIL-5000 | — | No |
 | Cushion | 24.99 | GLOBAL-CUSH-16X16-CAN-DUAL | — | No |
 | Jigsaw Puzzle (252pc) | 24.99 | JIGSAW-PUZZLE-252 | — | No |
 | Greeting Card | 7.99 | CLASSIC-GRE-FEDR-7X5-BLA | StandardCardTemplate | No |
@@ -859,14 +933,35 @@ printExport.js ─── HTML-to-PNG export pipeline
 
 Rates are hardcoded approximations. Stripe Adaptive Pricing handles actual conversion at checkout.
 
+### 9.5 Tiering Matrix (April 2026)
+
+| Feature | Free | Plus (£3.99/mo) | Pro (£7.99/mo) |
+|---------|:----:|:---------------:|:--------------:|
+| Individual analysis | 5 per 14 days | Unlimited | Unlimited |
+| Group photos | ✓ | ✓ | ✓ |
+| FamiliUno (digital) | ✓ | ✓ | ✓ |
+| Memory Match | ✓ | ✓ | ✓ |
+| FamiliMatch Solo | ✓ | ✓ | ✓ |
+| Face Match | — | ✓ | ✓ |
+| Face Fusion | — | ✓ | ✓ |
+| Hungry Heads | — | ✓ | ✓ |
+| Feature Catch | — | ✓ | ✓ |
+| FamiliPoker | — | ✓ | ✓ |
+| FamiliMatch Duo/Group | — | ✓ | ✓ |
+| Treasure ordering | Full price | 10% off | 15% off |
+| FamiliUno Party (P2P) | — | — | ✓ |
+| Explain-Why Scoring | — | — | ✓ |
+
+IP-based rate limiting: 7 analyses per IP per 14-day window (user sees 5, backend allows 7 for shared households). Enforced server-side via `rate_limit.py`. Frontend shows remaining count.
+
 ---
 
 ## 10. Technology Stack
 
 | Repo | Language | Framework | Key Deps | Tests |
 |------|----------|-----------|----------|-------|
-| desktop2 | JavaScript | React 18 + Vite | face-api.js, TF.js, framer-motion, Stripe | Vitest 1,022+ + Playwright |
-| desktop3 | Python 3.10 | FastAPI + Uvicorn | InsightFace, AdaFace ONNX, MediaPipe, OpenCV, Stripe, Prodigi | pytest 166+ |
+| desktop2 | JavaScript | React 18 + Vite | face-api.js, TF.js, framer-motion, Stripe | Vitest 1,279+ + Playwright |
+| desktop3 | Python 3.10 | FastAPI + Uvicorn | InsightFace, AdaFace ONNX, MediaPipe, OpenCV, Stripe, Prodigi | pytest 173+ |
 | desktop4 | JavaScript | React 18 + Vite + Tailwind | face-api.js, TF.js, framer-motion | Vitest 932 + Playwright 42 |
 | desktop5 | Python 3.10 | FastAPI + Uvicorn | pydantic | pytest 37 |
 | desktop6 | JavaScript | React 18 + Vite + Tailwind | react-router-dom, framer-motion, lucide-react | Vitest 98 |
@@ -894,7 +989,7 @@ Rates are hardcoded approximations. Stripe Adaptive Pricing handles actual conve
 - [x] 6 games (MemoryMatch, FeatureMatch, CardGame, FaceFusion, HungryHeads, FeatureCatch)
 - [x] Group photo snapshot (`/kinship/group-snapshot`)
 - [x] Analytics dashboard (`/dashboard` — SHA-256 auth gated)
-- [x] **Brand hub homepage** (famililook.com root → 4-tile product grid) — **LIVE** (2026-02-26)
+- [x] **Product-led homepage** — 6 occasion cards, rotating taglines, result preview, email capture (replacing 4-tile brand hub) — **LIVE** (2026-04-02)
 - [x] **Commerce layer** — Stripe checkout (single + basket), multi-currency (8 countries), personalised message surcharge
 - [x] **Prodigi integration** — keepsake ordering live, verified SKUs, webhook status tracking
 - [x] **Keepsake template system** — lazy-loaded templates, print profiles, preview rendering
@@ -905,6 +1000,23 @@ Rates are hardcoded approximations. Stripe Adaptive Pricing handles actual conve
 - [x] **FamiliVault heritage card** — premium trading card template with rarity tiers, power stats, barcode, QR zone, holographic effects (see §3.6)
 - [x] **FamiliTrail board** — gamified feature discovery page at `/trail`, 22 stops across 6 zones, tier gating, peek previews, campaign badges (see §3.5)
 - [x] **Parent-pair exclusion (couple gate)** — parents excluded from pairwise comparison by default; label gate requires parent tagging in group mode; opt-in toggle; FamiliMatch redirect for couples
+- [x] **Occasion landing pages** — soft landing at `/occasion/:id`, 6 variants (2026-04-04)
+- [x] **OccasionShelf** — occasion-aware product cards on results page (2026-04-02)
+- [x] **"Keepsake" → "Treasure"** — full user-facing rebrand (2026-04-02)
+- [x] **Free tier unlocked** — 5 analyses/14 days, group photos, Uno real cards, ordering at full price (2026-04-02)
+- [x] **Tiering enforcement** — Face Match, Face Fusion, Hungry Heads, Feature Catch, FamiliPoker gated behind Plus (2026-04-04)
+- [x] **Error resilience** — fetchWithRetry utility, checkout auto-retry, detection auto-retry (2026-04-04)
+- [x] **IP rate limiting** — backend enforcement + frontend remaining count (2026-04-04)
+- [x] **Analytics consent fix** — essential events track without consent (GDPR Art 6(1)(f)) (2026-04-04)
+- [x] **PNG export fix** — cacheBust + html2canvas fallback (2026-04-02)
+- [x] **Checkout email** — email field added to BasketDrawer, passed to QPMarkets (2026-04-04)
+- [x] **Docker volume** — orders_data/ persisted (2026-04-04)
+- [x] **Health endpoint** — returns 503 when engine is down for Docker auto-restart (2026-04-04)
+- [x] **Navigation fixes** — ?from= params on all occasion routes (2026-04-04)
+- [x] **FacePicker fix** — bounding box positioning for object-fit:contain (2026-04-04)
+- [x] **Revenue tracking** — actual prices in analytics events (2026-04-04)
+- [x] **CORS fix** — X-Plan header added to both Caddy and FastAPI (2026-04-04)
+- [x] **First revenue** — £54.97 from 2 mugs + 1 deck (2026-04-04)
 - [ ] Analytics dashboard bugs (feedback endpoint, session count, double-count) — deferred
 - [ ] 3D keepsake mockups — planned (Blender templates + browser compositing)
 - [ ] Wire SVG icons into all templates (currently still using emoji)
@@ -946,7 +1058,7 @@ Rates are hardcoded approximations. Stripe Adaptive Pricing handles actual conve
 | OnboardingScreen + sessionStorage name | Complete |
 | FeatureScanAnimation (3-phase analysis display) | Complete |
 | Face fusion integration | Complete (via /face/morph) |
-| Desktop6 FE tests | 98 passing |
+| Desktop6 FE tests | 51 passing |
 | **Duo/Group tier gating** (Plus required, URL param `?tier=`, upgrade modal) | **Done** (2026-03-28) — `LandingPage.jsx` MODE_CARDS + upgrade modal |
 | **Wire Solo to `/compare/faces`** (symmetric peer comparison, all scoring in backend) | **Done** — `matchClient.js` uses `POST /compare/faces`; contract frozen at `contracts/compare_faces.v1.schema.json` |
 | **Group photo scan mode** (upload one photo → detect all faces → pairwise compat) | **Planned** — distinct from /kinship/group-snapshot which is FamiliLook-only |
@@ -956,19 +1068,86 @@ Rates are hardcoded approximations. Stripe Adaptive Pricing handles actual conve
 
 ---
 
-## 12. Repo Map
+## 12. Structural Modules (desktop2 infrastructure — April 2026)
+
+Three cross-cutting infrastructure modules were built during a dedicated structural sprint (Sessions A–F, April 2026). Each eliminates an entire category of bugs by centralising logic that was previously duplicated across dozens of files.
+
+### 12.1 AppErrorBus
+
+**Location:** `famililook-desktop2/src/infrastructure/AppErrorBus.js`
+**Problem solved:** 23 silent `catch {}` blocks across the codebase swallowed errors. Users clicked things and nothing happened. No telemetry, no toast, no way to diagnose.
+**What it is:** A lightweight event emitter that every catch block reports to. One `<ErrorToast />` component reads from it and shows user-visible feedback.
+**Status:** BUILT (Phases 1-3, Sessions A/B). 23 high-severity silent catches migrated. ~40 defensive catches (sessionStorage probes, TF.js backend checks) deferred to Phase 4 ESLint.
+**Adoption rule:** No new `catch {}` blocks may be added without calling `AppErrorBus.report()`. ESLint enforcement pending (Phase 4).
+
+### 12.2 AppStorage
+
+**Location:** `famililook-desktop2/src/infrastructure/AppStorage.js`
+**Problem solved:** 35+ raw `localStorage` calls with no schema, no versioning, no quota handling, no multi-tab sync, and silent failures when storage is full.
+**What it is:** A single module that owns all 50+ `fl:*` localStorage keys. Provides typed API (`get`/`set`/`remove`), handles quota errors gracefully, versions keys for migration safety, syncs across tabs via BroadcastChannel, and supports deprecated-key guards.
+**Status:** BUILT (Phases 1-4 COMPLETE, Sessions B/D/E). 230 raw call sites migrated. `utils/storage.js` deleted. ESLint `no-restricted-syntax` rule active — prevents new raw `localStorage` access.
+**Adoption rule:** No component may call `localStorage.getItem` or `localStorage.setItem` directly. All persistence goes through `AppStorage.get(key)` / `AppStorage.set(key, value)`. 2 dev-only debug flags exempted via eslint-disable.
+
+### 12.3 resultsContract
+
+**Location:** `famililook-desktop2/src/infrastructure/resultsContract.js`
+**Problem solved:** Winner logic existed in 6+ places with different field-path fallbacks, different normalization, and different percentage calculations. Live data disagreements: MobileResultsSection and useFamilyKeepsakeData returned different winners for the same child.
+**What it is:** A single file of pure functions — the ONLY place winner determination, feature vote extraction, percentage calculation, and the 50/50 nudge rule live. All components consume from it.
+**Status:** BUILT (Phases 1-3 COMPLETE, Sessions C/D/F). All 7 consumer files migrated. 37 unit tests locking canonical behaviour. 209 lines of inline derivation removed. ESLint enforcement pending (Phase 4).
+**Adoption rule:** No component may re-derive `winner`, `percentage`, `featureVotes`, or apply the 50/50 rule. Import from `resultsContract.js` only.
+
+### 12.4 Module Status Summary
+
+| Module | Built | Phases Complete | ESLint Rule | Consumer Files |
+|--------|:-----:|:---:|:---:|:---:|
+| AppErrorBus | 2026-04-09 | 1-3 of 4 | Pending | 9 files using `.report()` |
+| AppStorage | 2026-04-10 | 1-4 (all) | Active | 47 files migrated |
+| resultsContract | 2026-04-13 | 1-3 of 4 | Pending | 7 files migrated |
+
+### 12.5 Consumers — resultsContract
+
+| File | Functions used | Migrated |
+|------|---------------|:--------:|
+| `hooks/useKinshipAnalysis.jsx` | `getWinner`, `extractFeatureVotes` | Phase 2 |
+| `layout/MobileResultsSection.jsx` | `getWinner`, `extractFeatureVotes`, `countFeatures`, `getPercentages` | Phase 3 |
+| `layout/AnalysisSection.jsx` | `getWinner`, `extractFeatureVotes` | Phase 3 |
+| `components/keepsakes/hooks/useKeepsakeData.js` | `getWinner`, `extractFeatureVotes`, `countFeatures`, `getPercentages` | Phase 3 |
+| `components/keepsakes/hooks/useFamilyKeepsakeData.js` | `getWinner`, `extractFeatureVotes`, `countFeatures`, `getPercentages`, `CANONICAL_FEATURES` | Phase 3 |
+| `utils/childSummaryGenerator.js` | Receives pre-normalised data from consumers above | Phase 3 |
+| `utils/narrativeGenerator.js` | Receives pre-normalised data from consumers above | Phase 3 |
+
+### 12.6 Future: Extraction to famililook-shared
+
+All three modules are currently in `famililook-desktop2/src/infrastructure/`. Once the `famililook-shared` npm package is built, they will be extracted there so desktop4 and desktop6 can consume them directly. The ESLint exemption paths use glob patterns (`**/infrastructure/AppStorage.js`) that survive the relocation.
+
+---
+
+## 13. Repo Map
 
 ```
 FML/                              (parent repo — main branch)
 ├── famililook-desktop2/          LIVE — FamiliLook FE (independent repo, NOT submodule)
+│   └── src/infrastructure/
+│       ├── AppErrorBus.js        Structural module — centralised error reporting
+│       ├── AppStorage.js         Structural module — canonical localStorage access
+│       └── resultsContract.js    Structural module — canonical winner/feature/percentage logic
 ├── famililook-desktop3/          LIVE — Shared Analysis Engine (independent repo, NOT submodule)
 ├── famililook-desktop4/          DEV  — FamiliPoker FE
 ├── famililook-desktop5/          DEV  — FamiliPoker Game Server
 ├── famililook-desktop6/          DEV  — FamiliMatch FE
 ├── famililook-desktop7/          DEV  — FamiliMatch Room Server
+├── Agent_1/crew/
+│   ├── orchestrator.md           v3.0 — 15 agent personas, 5 levels
+│   ├── SESSION_PROTOCOL.md       Mandatory session opening protocol
+│   ├── agents/                   15 native Claude Code agent personas
+│   ├── workflows/                sprint, bug_fix, feature_dev, mobile, multiplayer, migrate, analytics
+│   └── output/                   Session handoffs, specs, audit reports
 ├── docs/
-│   ├── PLATFORM_ARCHITECTURE.md (this document)
+│   ├── PLATFORM_ARCHITECTURE.md  (this document)
+│   ├── FMEA_comprehensive.md    Failure mode analysis — 67 items fixed
+│   ├── MASTER_REGRESSION_MATRIX.md  UXD→FMEA→Test→Contract traceability
 │   └── FAMILIMATCH_DESIGN_REQUIREMENTS.md
+├── .claude/                      Governance layer (guardrails, validators, hooks)
 ├── legal/                        Privacy policies, terms
-└── CLAUDE.md                     Dev governance
+└── CLAUDE.md                     Dev governance — non-negotiable rules
 ```

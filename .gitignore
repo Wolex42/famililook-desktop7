@@ -7,3 +7,11 @@ venv/
 dist/
 build/
 .pytest_cache/
+
+# Sub-repo working directories (managed by their own git)
+famililook-desktop2/
+famililook-desktop3/
+famililook-desktop4/
+famililook-desktop5/
+famililook-desktop6/
+famililook-desktop7/

@@ -1,0 +1,21 @@
+# Working Set — Session E onwards
+# Updated: 2026-04-10
+# Note: validate_scope.py is ADVISORY ONLY. This file is for reference, not enforcement.
+# Enforcement is: diff preview + CEO approval + pre-commit hook.
+
+## Always allowed (governance files — never blocked)
+.claude/change_log.md
+.claude/working_set.txt
+Agent_1/crew/output/
+Agent_1/crew/agents/
+
+## Current sprint files (resultsContract Phase 3 + ESLint rules)
+famililook-desktop2/src/infrastructure/resultsContract.js
+famililook-desktop2/src/layout/MobileResultsSection.jsx
+famililook-desktop2/src/layout/AnalysisSection.jsx
+famililook-desktop2/src/hooks/useKeepsakeData.js
+famililook-desktop2/src/hooks/useFamilyKeepsakeData.js
+famililook-desktop2/src/utils/childSummaryGenerator.js
+famililook-desktop2/src/utils/narrativeGenerator.js
+famililook-desktop2/eslint.config.js
+famililook-desktop2/.claude/change_log.md

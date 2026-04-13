@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Occasion-to-Product Mapping — FamiliLook</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #F7F5F0;
+    --surface: #FFFFFF;
+    --border: #E4E0D8;
+    --text-primary: #1A1814;
+    --text-secondary: #6B6760;
+    --text-tertiary: #9E9B96;
+    --violet: #5B3FD4;
+    --violet-light: #EDE9FB;
+    --teal: #1A7A5E;
+    --teal-light: #E2F4EE;
+    --amber: #B05C10;
+    --amber-light: #FDF0E4;
+    --coral: #C23B3B;
+    --coral-light: #FCEAEA;
+    --blue: #2B5FA6;
+    --blue-light: #E8EFFA;
+    --purple: #7B3FA8;
+    --purple-light: #F3ECFB;
+    --featured-border: #5B3FD4;
+    --featured-bg: #F9F7FE;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    padding: 48px 32px;
+    min-height: 100vh;
+  }
+
+  .page-header {
+    margin-bottom: 32px;
+  }
+
+  .page-eyebrow {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: 8px;
+  }
+
+  .page-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.15;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    max-width: 960px;
+  }
+
+  @media (max-width: 700px) {
+    .grid { grid-template-columns: 1fr; }
+    body { padding: 24px 16px; }
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+
+  .card:hover {
+    box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+    transform: translateY(-2px);
+  }
+
+  .card.featured {
+    background: var(--featured-bg);
+    border: 1.5px solid var(--featured-border);
+  }
+
+  .tag {
+    display: inline-block;
+    font-family: 'Syne', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    padding: 4px 10px;
+    border-radius: 20px;
+    width: fit-content;
+  }
+
+  .tag-violet  { background: var(--violet-light);  color: var(--violet); }
+  .tag-teal    { background: var(--teal-light);    color: var(--teal); }
+  .tag-amber   { background: var(--amber-light);   color: var(--amber); }
+  .tag-coral   { background: var(--coral-light);    color: var(--coral); }
+  .tag-blue    { background: var(--blue-light);    color: var(--blue); }
+  .tag-purple  { background: var(--purple-light);  color: var(--purple); }
+
+  .card-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.25;
+  }
+
+  .card-desc {
+    font-size: 13.5px;
+    color: var(--text-secondary);
+    line-height: 1.65;
+    font-weight: 300;
+  }
+
+  .card-divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 0;
+  }
+
+  .meta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .meta-grid.three {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  .meta-item { display: flex; flex-direction: column; gap: 3px; }
+
+  .meta-label {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    font-weight: 400;
+    letter-spacing: 0.01em;
+  }
+
+  .meta-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .note {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    font-style: italic;
+    line-height: 1.5;
+    margin-top: -4px;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="page-eyebrow">FamiliLook · Strategy</div>
+  <div class="page-title">Occasion-to-product mapping</div>
+</div>
+
+<div class="grid">
+
+  <div class="card">
+    <span class="tag tag-violet">Gift giving</span>
+    <div class="card-title">Father's / Mother's Day</div>
+    <p class="card-desc">Lead with the mug. "Show your dad his bond with you, printed on something he'll use every morning." Secondary: framed canvas, greeting card.</p>
+    <hr class="card-divider">
+    <div class="meta-grid">
+      <div class="meta-item">
+        <span class="meta-label">Hero product</span>
+        <span class="meta-value">Ceramic mug</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Photos needed</span>
+        <span class="meta-value">2 (parent + child)</span>
+      </div>
+    </div>
+    <div class="meta-grid">
+      <div class="meta-item">
+        <span class="meta-label">AOV potential</span>
+        <span class="meta-value">£14–28</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="tag tag-teal">Family activity</span>
+    <div class="card-title">Holiday / vacation</div>
+    <p class="card-desc">"Pack something the whole family made together." Uno deck with everyone's face on the cards. Puzzle. Card deck. Sells the activity, not the print.</p>
+    <hr class="card-divider">
+    <div class="meta-grid">
+      <div class="meta-item">
+        <span class="meta-label">Hero product</span>
+        <span class="meta-value">Uno / card deck</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Photos needed</span>
+        <span class="meta-value">3–6 (family)</span>
+      </div>
+    </div>
+    <div class="meta-grid">
+      <div class="meta-item">
+        <span class="meta-label">AOV potential</span>
+        <span class="meta-value">£25–50</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="tag tag-amber">Game night</span>
+    <div class="card-title">Family poker / games</div>
+    <p class="card-desc">"Play poker with your family, with your family on the cards." FamiliPoker crossover. Strongest social sharing hook — people post this.</p>
+    <hr class="card-divider">
+    <div class="meta-grid three">
+      <div class="meta-item">
+        <span class="meta-label">Hero product</span>
+        <span class="meta-value">Poker / playing cards</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Photos needed</span>
+        <span class="meta-value">2–8</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">AOV potential</span>
+        <span class="meta-value">£10–25</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="tag tag-coral">New arrival</span>
+    <div class="card-title">New baby / birth</div>
+    <p class="card-desc">"Who does the baby look like?" is the natural first question every family asks. This is FamiliLook's strongest emotional hook — lead with it as an occasion.</p>
+    <hr class="card-divider">
+    <div class="meta-grid">
+      <div class="meta-item">
+        <span class="meta-label">Hero product</span>
+        <span class="meta-value">Keepsake print / card</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Photos needed</span>
+        <span class="meta-value">2–3</span>
+      </div>
+    </div>
+    <div class="meta-grid">
+      <div class="meta-item">
+        <span class="meta-label">AOV potential</span>
+        <span class="meta-value">£7–25</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="tag tag-blue">Milestone</span>
+    <div class="card-title">Birthday / graduation</div>
+    <p class="card-desc">"A gift that shows exactly where they came from." Cushion, framed canvas, mug set. Higher spend occasions — don't undersell with low entry price.</p>
+    <hr class="card-divider">
+    <div class="meta-grid">
+      <div class="meta-item">
+        <span class="meta-label">Hero product</span>
+        <span class="meta-value">Canvas / cushion / mug set</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Photos needed</span>
+        <span class="meta-value">2–4</span>
+      </div>
+    </div>
+    <div class="meta-grid">
+      <div class="meta-item">
+        <span class="meta-label">AOV potential</span>
+        <span class="meta-value">£28–40</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card featured">
+    <span class="tag tag-purple">Viral hook</span>
+    <div class="card-title">Just curious — the free play</div>
+    <p class="card-desc">Keep the free "see your bond" result as the top of funnel. But the moment they see the score, serve the occasion cards directly: "Turn this into something real."</p>
+    <hr class="card-divider">
+    <div class="meta-grid three">
+      <div class="meta-item">
+        <span class="meta-label">Role</span>
+        <span class="meta-value">Acquisition</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Converts to</span>
+        <span class="meta-value">Any product</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Change needed</span>
+        <span class="meta-value">Results page CTA</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

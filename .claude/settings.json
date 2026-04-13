@@ -1,0 +1,40 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx vite build)",
+      "Bash(find /c/Users/wole/Documents/FML/famililook-desktop3 -type f \\\\\\(-name test_*.py -o -name *_test.py \\\\\\))",
+      "Bash(find /c/Users/wole/Documents/FML/famililook-desktop6 -path */node_modules -prune -o -type f \\\\\\(-name *.test.js -o -name *.test.jsx -o -name *.test.ts* -o -name *.spec.js \\\\\\) -print)",
+      "Bash(cp \"c:/Users/wole/Documents/FML/.claude/pre-commit-hook.sh\" \"c:/Users/wole/Documents/FML/famililook-desktop2/.git/hooks/pre-commit\")",
+      "Bash(chmod +x \"c:/Users/wole/Documents/FML/famililook-desktop2/.git/hooks/pre-commit\")",
+      "Bash(cp \"c:/Users/wole/Documents/FML/.claude/pre-commit-hook.sh\" \"c:/Users/wole/Documents/FML/famililook-desktop4/.git/hooks/pre-commit\")",
+      "Bash(chmod +x \"c:/Users/wole/Documents/FML/famililook-desktop4/.git/hooks/pre-commit\")",
+      "Bash(cp \"c:/Users/wole/Documents/FML/.claude/pre-commit-hook.sh\" \"c:/Users/wole/Documents/FML/famililook-desktop6/.git/hooks/pre-commit\")",
+      "Bash(chmod +x \"c:/Users/wole/Documents/FML/famililook-desktop6/.git/hooks/pre-commit\")",
+      "Bash(node scripts/quality-gate.js --unit-only)",
+      "Bash(robocopy \"c:\\\\Users\\\\wole\\\\Documents\\\\FML\" \"c:\\\\Users\\\\wole\\\\OneDrive\\\\FML\" /MIR /XD node_modules .git dist dist_backup_20260331 __pycache__ /XF .env .env.local /NFL /NDL /NJH /NJS)",
+      "Bash(robocopy \"c:\\\\Users\\\\wole\\\\Documents\\\\FML\" \"c:\\\\Users\\\\wole\\\\OneDrive\\\\FML\" /MIR /XD node_modules .git dist dist_backup_20260331 __pycache__ .claude /XF .env .env.local nul /NFL /NDL /NJH /NJS /R:1 /W:1)",
+      "Bash(cmd.exe //c \"robocopy c:\\\\Users\\\\wole\\\\Documents\\\\FML c:\\\\Users\\\\wole\\\\OneDrive\\\\FML /MIR /XD node_modules .git dist dist_backup_20260331 __pycache__ .claude /XF .env .env.local nul /NFL /NDL /NJH /NJS /R:1 /W:1\")",
+      "Bash(FILE=\"C:\\\\Users\\\\wole\\\\Documents\\\\FML\\\\.claude\\\\worktrees\\\\quizzical-mendel\\\\sessions\\\\optimistic-ecstatic-fermi\\\\mnt\\\\outputs\\\\FMEA_comprehensive.md\")",
+      "Bash(sed -i -e '82s/| \\\\*\\\\*Status\\\\*\\\\* | Open |/| **Status** | FIXED \\(Sprint 4D\\) |/' -e '101s/| \\\\*\\\\*Status\\\\*\\\\* | Open |/| **Status** | FIXED \\(Sprint 1\\) |/' -e '120s/| \\\\*\\\\*Status\\\\*\\\\* | Open |/| **Status** | FIXED \\(Sprint 0B\\) |/' -e '139s/| \\\\*\\\\*Status\\\\*\\\\* | Open |/| **Status** | FIXED \\(Sprint 0B\\) |/' -e '158s/| \\\\*\\\\*Status\\\\*\\\\* | Open |/| **Status** | FIXED \\(Sprint 3\\) |/' -e '177s/| \\\\*\\\\*Status\\\\*\\\\* | Open |/| **Status** | FIXED \\(Sprint 0B\\) |/' -e '196s/| \\\\*\\\\*Status\\\\*\\\\* | Open |/| **Status** | FIXED \\(Sprint 2\\) |/' -e '215s/| \\\\*\\\\*Status\\\\*\\\\* | Open |/| **Status** | FIXED \\(Sprint 3\\) |/' -e '234s/| \\\\*\\\\*Status\\\\*\\\\* | Open |/| **Status** | FIXED \\(Sprint 1\\) |/' -e '253s/| \\\\*\\\\*Status\\\\*\\\\* | Open |/| **Status** | FIXED \\(Sprint 4D\\) |/' -e '272s/| \\\\*\\\\*Status\\\\*\\\\* | Open |/| **Status** | FIXED \\(Sprint 3\\) |/' -e '291s/| \\\\*\\\\*Status\\\\*\\\\* | Open |/| **Status** | FIXED \\(Sprint 4C\\) |/' -e '329s/| \\\\*\\\\*Status\\\\*\\\\* | Open |/| **Status** | FIXED \\(Sprint 4D\\) |/' -e '348s/| \\\\*\\\\*Status\\\\*\\\\* | Open |/| **Status** | FIXED \\(Sprint 4D\\) |/' -e '367s/| \\\\*\\\\*Status\\\\*\\\\* | Open |/| **Status** | FIXED |/' -e '405s/| \\\\*\\\\*Status\\\\*\\\\* | Open |/| **Status** | FIXED \\(Sprint 4C\\) |/' -e '422s/| \\\\*\\\\*Status\\\\*\\\\* | Open \\(duplicate.*\\)/| **Status** | FIXED \\(Sprint 4D\\) |/' -e '441s/| \\\\*\\\\*Status\\\\*\\\\* | Open |/| **Status** | FIXED \\(Sprint 4D\\) |/' -e '496s/| \\\\*\\\\*Status\\\\*\\\\* | Open \\(fix with FL-010\\) |/| **Status** | FIXED \\(Sprint 4D\\) |/' -e '515s/| \\\\*\\\\*Status\\\\*\\\\* | Open |/| **Status** | FIXED \\(Sprint 1\\) |/' \"$FILE\")",
+      "Bash(FILE=\"C:\\\\Users\\\\wole\\\\Documents\\\\FML\\\\.claude\\\\worktrees\\\\quizzical-mendel\\\\sessions\\\\optimistic-ecstatic-fermi\\\\mnt\\\\outputs\\\\FMEA_comprehensive.md\" echo \"=== FIXED in RPN Summary Table ===\" grep -E '^\\\\| FMEA-FL' \"$FILE\")",
+      "Read(//c/Users/wole/Documents/FML/**)",
+      "Bash(FILE=\"C:\\\\Users\\\\wole\\\\Documents\\\\FML\\\\.claude\\\\worktrees\\\\quizzical-mendel\\\\sessions\\\\optimistic-ecstatic-fermi\\\\mnt\\\\outputs\\\\FMEA_comprehensive.md\" sed -n '/^## Full RPN Summary Table/,/^\\\\*Values capped/p' \"$FILE\")",
+      "Bash(FILE=\"C:\\\\Users\\\\wole\\\\Documents\\\\FML\\\\.claude\\\\worktrees\\\\quizzical-mendel\\\\sessions\\\\optimistic-ecstatic-fermi\\\\mnt\\\\outputs\\\\FMEA_comprehensive.md\" echo \"FL count:\" sed -n '/^## Full RPN Summary Table/,/^\\\\*Values capped/p' \"$FILE\")",
+      "Read(//^## Full RPN Summary Table/,/**)",
+      "Bash(FILE=\"C:\\\\Users\\\\wole\\\\Documents\\\\FML\\\\.claude\\\\worktrees\\\\quizzical-mendel\\\\sessions\\\\optimistic-ecstatic-fermi\\\\mnt\\\\outputs\\\\FMEA_comprehensive.md\" echo \"=== FL ===\" sed -n '/^## Full RPN Summary Table/,/^\\\\*Values capped/p' \"$FILE\")",
+      "Bash(FILE=\"C:\\\\Users\\\\wole\\\\Documents\\\\FML\\\\.claude\\\\worktrees\\\\quizzical-mendel\\\\sessions\\\\optimistic-ecstatic-fermi\\\\mnt\\\\outputs\\\\FMEA_comprehensive.md\" echo \"DFMEA-FM-07:\" grep 'DFMEA-FM-07' \"$FILE\" echo \"\" echo \"DFMEA-FM-09:\" grep 'DFMEA-FM-09' \"$FILE\" echo \"\" echo \"DFMEA-FM-17:\" grep 'DFMEA-FM-17' \"$FILE\" echo \"\" echo \"FL-016 \\(summary table\\):\" sed -n '/^## Full RPN Summary Table/,/^\\\\*Values/p' \"$FILE\")",
+      "Bash(npx acorn:*)",
+      "Bash(grep -n \"require\\(\" \"/c/Users/wole/Documents/FML/famililook-desktop2/src/components/keepsakes/mobile/\"*.jsx)",
+      "Bash(sort -t: -k3 -n)",
+      "Bash(du -sh .*)",
+      "Bash(git filter-repo:*)",
+      "Bash(git rm:*)",
+      "Bash(git count-objects:*)",
+      "Read(//c/Users/wole/OneDrive/**)",
+      "Bash(git -C /c/Users/wole/Documents/FML/famililook-desktop2 log --oneline -5)"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\wole\\Documents\\FML"
+    ]
+  }
+}
