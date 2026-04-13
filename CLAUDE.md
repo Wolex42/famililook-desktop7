@@ -44,6 +44,7 @@ After completing ANY task that changes the state of the system:
 All agents are Claude Code native personas in `Agent_1/crew/agents/*.md` — zero API cost.
 Orchestrator: `Agent_1/crew/orchestrator.md`
 CrewAI agents (ad_crew, ops_agents) are SUPERSEDED — do not reference them.
+Every new Claude Code session MUST begin by reading `Agent_1/crew/SESSION_PROTOCOL.md` before any other action.
 
 **15 agents across 5 levels:**
 
@@ -192,9 +193,9 @@ These modules, once built, make entire categories of bugs impossible. No agent m
 
 | Module | Location | Status | Bypass = |
 |--------|----------|--------|---------|
-| AppErrorBus | famililook-shared/infrastructure/ | NOT BUILT | Silent catch block → P1 violation |
-| AppStorage | famililook-shared/infrastructure/ | NOT BUILT | Direct localStorage call → P1 violation |
-| resultsContract.js | famililook-shared/infrastructure/ | NOT BUILT | Winner logic outside this file → P1 violation |
+| AppErrorBus | famililook-desktop2/src/infrastructure/ | BUILT (2026-04-09) — Phases 1-3 complete, Phase 4 ESLint pending | Silent catch block → P1 violation |
+| AppStorage | famililook-desktop2/src/infrastructure/ | BUILT (2026-04-10) — Phases 1-4 COMPLETE, ESLint active | Direct localStorage call → P1 violation |
+| resultsContract.js | famililook-desktop2/src/infrastructure/ | BUILT (2026-04-11) — Phases 1-3 complete, Phase 4 ESLint pending | Winner logic outside this file → P1 violation |
 
 Once built: any new `catch {}`, direct `localStorage.getItem/setItem`, or winner derivation outside resultsContract.js is a governance violation that Change Manager must flag and block.
 
@@ -282,7 +283,7 @@ desktop2 is the canonical version reference for all shared frontend dependencies
 | react | ^18.3.1 | ^18.3.1 ✅ | ^18.3.1 ✅ | — |
 | react-dom | ^18.3.1 | ^18.3.1 ✅ | ^18.3.1 ✅ | — |
 | react-router-dom | ^7.9.5 | ^7.9.5 ✅ | ^7.9.5 ✅ | — |
-| framer-motion | ^12.34.3 | **^11.0.0 ❌** | **^11.0.0 ❌** | Align desktop4+6 |
+| framer-motion | ^12.34.3 | **^11.0.0 ❌** | ^12.34.3 ✅ | Align desktop4 |
 
 **Rules:**
 1. When desktop2 upgrades a shared dependency: Platform Architect assesses cross-repo impact, all other repos align in the same sprint
@@ -495,6 +496,25 @@ When any change is made to famililook-shared:
 | desktop7 | NO | Install |
 | famililook-shared | NOT YET | Install when created |
 | famililook-game-engine | NOT YET | Install when created |
+
+---
+
+## Asset Size Governance
+
+Character PNG assets (`famililook-desktop2/src/assets/characters/`) are 
+currently ~56MB across 20+ files. This directory will grow as new 
+characters are added.
+
+Rule: If character assets exceed 100MB total, migrate to Git LFS:
+  git lfs track "*.png"
+  git add .gitattributes
+
+Check current size before adding new character assets:
+  du -sh famililook-desktop2/src/assets/characters/
+
+ML models (desktop3/models/) are 180MB+ and must never be committed 
+to git. They are loaded at runtime from the server filesystem.
+Verify .gitignore covers models/ before any desktop3 commits.
 
 ---
 
