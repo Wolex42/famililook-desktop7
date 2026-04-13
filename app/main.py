@@ -1,6 +1,9 @@
 """FastAPI WebSocket server for real-time face comparison rooms."""
 
 import asyncio
+import base64
+import hashlib
+import hmac
 import json
 import os
 import time
@@ -9,7 +12,7 @@ import logging
 from contextlib import asynccontextmanager
 
 import httpx
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Query
 from fastapi.middleware.cors import CORSMiddleware
 
 from .protocol import ClientMessageType, ServerMessageType, server_msg, error_msg
@@ -19,8 +22,44 @@ from .consent import get_pending_consents
 
 logger = logging.getLogger(__name__)
 
+MATCH_TIER_SECRET = os.getenv("MATCH_TIER_SECRET", "")
+
+
+def verify_tier_token(token_str: str, secret: str) -> dict | None:
+    """Verify an HMAC-SHA256 signed tier token.
+
+    Token format: base64(json({"tier":"plus","exp":timestamp})).hmac_signature
+    Returns the decoded payload dict or None if invalid/expired.
+    """
+    if not token_str or not secret:
+        return None
+    try:
+        parts = token_str.rsplit(".", 1)
+        if len(parts) != 2:
+            return None
+        payload_b64, signature_hex = parts
+        # Verify HMAC
+        expected = hmac.new(
+            secret.encode(), payload_b64.encode(), hashlib.sha256
+        ).hexdigest()
+        if not hmac.compare_digest(expected, signature_hex):
+            logger.warning("Tier token HMAC mismatch")
+            return None
+        # Decode payload
+        payload = json.loads(base64.b64decode(payload_b64))
+        # Check expiry
+        exp = payload.get("exp", 0)
+        if time.time() > exp:
+            logger.info("Tier token expired (exp=%s)", exp)
+            return None
+        return payload
+    except Exception as e:
+        logger.warning("Tier token verification failed: %s", e)
+        return None
+
 ALLOWED_ORIGINS = os.getenv(
-    "ALLOWED_ORIGINS", "http://localhost:5174,http://localhost:5173"
+    "ALLOWED_ORIGINS",
+    "http://localhost:5174,http://localhost:5173,https://familimatch.com,https://www.familimatch.com,https://famililook-desktop6.vercel.app"
 ).split(",")
 
 
@@ -60,7 +99,7 @@ async def health():
 
 
 @app.websocket("/ws/match")
-async def ws_match(websocket: WebSocket):
+async def ws_match(websocket: WebSocket, token: str = Query(default="")):
     # Per-IP connection limit
     client_ip = websocket.client.host if websocket.client else "unknown"
     count = _connections_per_ip.get(client_ip, 0)
@@ -69,6 +108,10 @@ async def ws_match(websocket: WebSocket):
         await websocket.close(code=1008, reason="Too many connections")
         return
     _connections_per_ip[client_ip] = count + 1
+
+    # Determine user tier from signed token (defaults to "free")
+    tier_payload = verify_tier_token(token, MATCH_TIER_SECRET) if token else None
+    user_tier = tier_payload.get("tier", "free") if tier_payload else "free"
 
     await websocket.accept()
     manager: RoomManager = app.state.room_manager
@@ -106,6 +149,13 @@ async def ws_match(websocket: WebSocket):
 
                 name = data.get("name", "Player")[:30]
                 room_type = data.get("room_type", "duo")
+
+                # Tier gating: Duo/Group require Plus or Pro
+                if room_type in ("duo", "group") and user_tier not in ("plus", "pro"):
+                    await websocket.send_text(json.dumps(error_msg(
+                        "Upgrade to Plus to create Duo/Group rooms"
+                    )))
+                    continue
 
                 player = Player(
                     id=player_id,
@@ -270,6 +320,53 @@ async def ws_match(websocket: WebSocket):
                 room_code = None
                 player = None
 
+            # --- REJOIN ROOM ---
+            elif msg_type == ClientMessageType.REJOIN_ROOM.value:
+                rejoin_pid = data.get("player_id", "")
+                rejoin_code = data.get("room_code", "").upper()
+
+                if not rejoin_pid or not rejoin_code:
+                    await websocket.send_text(json.dumps(error_msg("Missing player_id or room_code")))
+                    continue
+
+                new_conn_id = f"conn_{uuid.uuid4().hex[:8]}"
+                restored = manager.rejoin_player(rejoin_code, rejoin_pid, websocket, new_conn_id)
+
+                if not restored:
+                    await websocket.send_text(json.dumps(error_msg("Rejoin failed — room expired or player not found")))
+                    continue
+
+                # Restore local state for this connection
+                player = restored
+                player_id = restored.id
+                room_code = rejoin_code
+                room = manager.get_room(room_code)
+
+                # Send rejoin success to the reconnecting player
+                await websocket.send_text(json.dumps(server_msg(
+                    ServerMessageType.REJOIN_SUCCESS,
+                    {
+                        "room_code": room_code,
+                        "player_id": player_id,
+                        "name": player.name,
+                        "players": [
+                            {"id": p.id, "name": p.name}
+                            for p in room.players.values()
+                        ],
+                        "has_photo": player_id in room.photos,
+                        "has_consent": player_id in room.consents,
+                    },
+                )))
+
+                # Broadcast reconnection to other players
+                await room.broadcast(
+                    server_msg(
+                        ServerMessageType.PLAYER_RECONNECTED,
+                        {"player_id": player_id, "name": player.name},
+                    ),
+                    exclude=player_id,
+                )
+
             # --- CHAT ---
             elif msg_type == ClientMessageType.SEND_CHAT.value:
                 if not room_code or not player:
@@ -310,12 +407,14 @@ async def ws_match(websocket: WebSocket):
         if room_code and player:
             room = manager.get_room(room_code)
             if room:
-                room.remove_player(player.id)
+                # Mark as disconnected — keep data intact for 5 min grace period
+                room.disconnect_player(player.id)
                 await room.broadcast(server_msg(
                     ServerMessageType.PLAYER_LEFT,
-                    {"player_id": player.id, "name": player.name},
+                    {"player_id": player.id, "name": player.name, "disconnected": True},
                 ))
-                if not room.players:
+                # Only remove room if no active AND no disconnected players
+                if not room.players and not room._disconnected:
                     room.clear_data()
                     manager.remove_room(room_code)
     except Exception as e:
