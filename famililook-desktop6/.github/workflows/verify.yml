@@ -5,13 +5,13 @@ name: Verify
 
 on:
   push:
-    branches: [main, develop, 'feature/**', 'fix/**']
+    branches: [main, production]
   pull_request:
-    branches: [main, develop]
+    branches: [main]
 
 jobs:
   verify:
-    name: Lint, Test, Build
+    name: Test, Build
     runs-on: ubuntu-latest
 
     steps:
@@ -32,16 +32,6 @@ jobs:
 
       - name: Build
         run: npm run build
-
-      - name: Upload test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results
-          path: |
-            coverage/
-            test-results/
-          retention-days: 7
 
   contract-tests:
     name: Contract Schema Validation

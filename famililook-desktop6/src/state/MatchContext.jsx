@@ -16,9 +16,7 @@ const USERNAME_KEY = 'fm:username';
 function loadUserName() {
   try {
     return sessionStorage.getItem(USERNAME_KEY) || '';
-  } catch {
-    return '';
-  }
+  } catch { return ''; } // eslint-disable-line no-empty
 }
 
 function saveUserName(name) {
@@ -28,7 +26,7 @@ function saveUserName(name) {
     } else {
       sessionStorage.removeItem(USERNAME_KEY);
     }
-  } catch { /* non-fatal */ }
+  } catch { /* non-fatal */ } // eslint-disable-line no-empty
 }
 
 const MatchContext = createContext(undefined);

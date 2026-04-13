@@ -14,6 +14,34 @@ Before this workflow can execute:
 
 ---
 
+## Mandatory Standards (from Lessons Learnt)
+
+These standards are NON-NEGOTIABLE for every bug fix. Violations will cause regression.
+
+### Before Implementation (Change Manager verifies):
+- [ ] If this is a VISUAL/UI fix: Visual Director must spec colours/dimensions BEFORE FE Lead implements (Lesson 7)
+- [ ] If this is a TEXT/COPY fix: Copywriter must spec max lengths BEFORE FE Lead implements (Lesson 7)
+- [ ] Blast radius scan: grep for all React hook usage vs imports in every modified file (Lesson 2)
+
+### During Implementation (FE Lead must follow):
+- [ ] NEVER use `display: none` for responsive hiding — use `{condition && (...)}` conditional rendering (Lesson 1)
+- [ ] NEVER make ad-hoc design decisions — implement EXACTLY to Visual Director/Copywriter spec (Lesson 7)
+- [ ] One agent owns a file — if another agent already edited it this session, coordinate or split (Lesson 5)
+- [ ] After editing, READ BACK the changed lines to verify acceptance criteria (Lesson 6)
+
+### After Implementation (QA Lead verifies):
+- [ ] All React hooks in modified files are imported (Lesson 2)
+- [ ] No `display: none` for responsive layout (Lesson 1)
+- [ ] Mobile UI fixes: mark "UNVERIFIED on device" until CEO confirms (Lesson 6)
+- [ ] If fix attempt > 2 for same issue: STOP, escalate to systemic review (Lesson 9)
+
+### Before Commit (Change Manager verifies):
+- [ ] FMEA status updated (Lesson 10)
+- [ ] Change log appended (Lesson 10)
+- [ ] Memory files updated if applicable (Lesson 10)
+
+---
+
 ## Step 1: Change Manager — Scope & Risk Assessment
 
 **Agent:** `change_manager`

@@ -5,15 +5,16 @@
  */
 
 import { API_BASE, API_KEY } from '../utils/config';
+import { report as reportError } from '../infrastructure/AppErrorBus';
+import { COMPARE_FEATURES } from '../utils/constants';
 
 function getBiometricHeaders() {
   try {
     const consent = JSON.parse(localStorage.getItem('fl:bipa-consent') || '{}');
     if (consent.bipaConsented) return { 'X-Biometric-Consent': 'granted' };
-  } catch { /* */ }
+  } catch { /* localStorage parse — non-fatal */ } // eslint-disable-line no-empty
   return {};
 }
-import { COMPARE_FEATURES } from '../utils/constants';
 
 /**
  * Convert a base64 data URL to a Blob for FormData upload.
@@ -47,7 +48,7 @@ async function postForm(path, formData) {
     try {
       const err = await resp.json();
       if (err.detail) msg = err.detail;
-    } catch { /* ignore */ }
+    } catch { /* response parse — non-fatal */ } // eslint-disable-line no-empty
     throw new Error(msg);
   }
   return resp.json();
@@ -95,7 +96,7 @@ async function createMorph(blobA, blobB, featureComparisons) {
     const result = await postForm('/face/morph', fd);
     return result.image || null;
   } catch (err) {
-    console.warn('[morph] Failed:', err.message);
+    reportError({ message: 'Face fusion could not be created.', context: 'matchClient.createMorph', severity: 'low', code: 'MORPH_FAIL', cause: err });
     return null;
   }
 }

@@ -14,6 +14,34 @@ Before a sprint can start:
 
 ---
 
+## Mandatory Standards (from Lessons Learnt)
+
+These standards are NON-NEGOTIABLE for every sprint item. Violations will cause regression.
+
+### Before Implementation (Change Manager verifies):
+- [ ] If this is a VISUAL/UI fix: Visual Director must spec colours/dimensions BEFORE FE Lead implements (Lesson 7)
+- [ ] If this is a TEXT/COPY fix: Copywriter must spec max lengths BEFORE FE Lead implements (Lesson 7)
+- [ ] Blast radius scan: grep for all React hook usage vs imports in every modified file (Lesson 2)
+
+### During Implementation (FE Lead must follow):
+- [ ] NEVER use `display: none` for responsive hiding — use `{condition && (...)}` conditional rendering (Lesson 1)
+- [ ] NEVER make ad-hoc design decisions — implement EXACTLY to Visual Director/Copywriter spec (Lesson 7)
+- [ ] One agent owns a file — if another agent already edited it this session, coordinate or split (Lesson 5)
+- [ ] After editing, READ BACK the changed lines to verify acceptance criteria (Lesson 6)
+
+### After Implementation (QA Lead verifies):
+- [ ] All React hooks in modified files are imported (Lesson 2)
+- [ ] No `display: none` for responsive layout (Lesson 1)
+- [ ] Mobile UI fixes: mark "UNVERIFIED on device" until CEO confirms (Lesson 6)
+- [ ] If fix attempt > 2 for same issue: STOP, escalate to systemic review (Lesson 9)
+
+### Before Commit (Change Manager verifies):
+- [ ] FMEA status updated (Lesson 10)
+- [ ] Change log appended (Lesson 10)
+- [ ] Memory files updated if applicable (Lesson 10)
+
+---
+
 ## Phase 1: Sprint Setup — COO
 
 **Agent:** `coo`
@@ -159,11 +187,12 @@ CROSS-CUTTING TESTS:
 **Action:**
 
 For each sprint item (ordered by dependency graph):
-1. Read all affected files
-2. Prepare exact diffs
-3. Present each diff to CEO for approval (per CLAUDE.md mandatory pre-edit checklist)
-4. Apply approved edits
-5. Run tests + build after each logical group of changes
+1. **For visual/UI issues: read Visual Director spec FIRST** — do not begin implementation without a design spec
+2. Read all affected files
+3. Prepare exact diffs
+4. Present each diff to CEO for approval (per CLAUDE.md mandatory pre-edit checklist)
+5. Apply approved edits
+6. Run tests + build after each logical group of changes
 
 After ALL items implemented:
 1. Run full test suite: `npm run test:run` per affected repo
@@ -201,7 +230,8 @@ EXPLANATION: <what and why>
 2. Verify each item's acceptance criteria
 3. Check all regression risks
 4. Verify tests and build status
-5. Write Sprint Verification Report to `crew/output/sprint_<N>_qa_verification.md`
+5. **Mobile UI fixes: mark as "UNVERIFIED on device" until CEO confirms on real device** — do not mark FIXED
+6. Write Sprint Verification Report to `crew/output/sprint_<N>_qa_verification.md`
 
 **Output:** Sprint Verification Report
 ```

@@ -128,9 +128,7 @@ export function useMatchConnection() {
     let msg;
     try {
       msg = JSON.parse(event.data);
-    } catch {
-      return;
-    }
+    } catch { return; } // eslint-disable-line no-empty
 
     const { type, data } = msg;
 

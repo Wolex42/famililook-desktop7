@@ -58,7 +58,8 @@ def verify_tier_token(token_str: str, secret: str) -> dict | None:
         return None
 
 ALLOWED_ORIGINS = os.getenv(
-    "ALLOWED_ORIGINS", "http://localhost:5174,http://localhost:5173"
+    "ALLOWED_ORIGINS",
+    "http://localhost:5174,http://localhost:5173,https://familimatch.com,https://www.familimatch.com,https://famililook-desktop6.vercel.app"
 ).split(",")
 
 

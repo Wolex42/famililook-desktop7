@@ -23,14 +23,14 @@ function loadConsent() {
       const parsed = JSON.parse(raw);
       if (parsed && typeof parsed.bipaConsented === 'boolean') return parsed;
     }
-  } catch { /* corrupted — treat as no consent */ }
+  } catch { /* corrupted — treat as no consent */ } // eslint-disable-line no-empty
   return { bipaConsented: false, timestamp: null };
 }
 
 function saveConsent(consent) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(consent));
-  } catch { /* storage full or blocked — non-fatal */ }
+  } catch { /* storage full or blocked — non-fatal */ } // eslint-disable-line no-empty
 }
 
 const ConsentContext = createContext(undefined);

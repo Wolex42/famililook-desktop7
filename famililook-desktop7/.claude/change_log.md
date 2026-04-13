@@ -5,6 +5,15 @@ Format: Description / Context / Action (D/C/A)
 
 ---
 
+## 2026-04-13 — Cross-repo impact from desktop6 Phase A1 (CR-MATCH-A1-04)
+
+**Description:** Added `https://familimatch.com`, `https://www.familimatch.com`, and `https://famililook-desktop6.vercel.app` to CORS `ALLOWED_ORIGINS` default in `app/main.py`. FamiliMatch is moving to its own domain — without this, WebSocket and API calls from familimatch.com would be blocked.
+**Risk Tier**: P1
+**Approved by**: CEO (backend permission granted for CORS task)
+**Status**: CLOSED
+
+---
+
 ## 2026-03-31 | Sprint 2: DFMEA + Gap Analysis Fixes (CR-0009)
 
 **Risk Tier**: P2

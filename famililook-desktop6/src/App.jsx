@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ConsentProvider } from './state/ConsentContext';
 import { MatchProvider } from './state/MatchContext';
+import ErrorToast from './components/ui/ErrorToast';
 
 const LandingPage = lazy(() => import('./pages/LandingPage'));
 const SoloPage    = lazy(() => import('./pages/SoloPage'));
@@ -44,6 +45,7 @@ export default function App() {
               <Route path="/terms"   element={<TermsPage />} />
             </Routes>
           </Suspense>
+          <ErrorToast />
         </MatchProvider>
       </ConsentProvider>
     </BrowserRouter>

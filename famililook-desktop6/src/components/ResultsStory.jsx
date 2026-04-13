@@ -23,22 +23,24 @@ import { ChevronLeft, ChevronRight, RotateCcw, Home, Check, X } from 'lucide-rea
 
 const TOTAL_SLIDES = 5;
 
-function useAnimatedNumber(target, duration = 1200) {
+function useAnimatedNumber(target, duration = 1800, delay = 600) {
   const [value, setValue] = useState(0);
   useEffect(() => {
-    const start = performance.now();
+    let timeout;
     let raf;
-    const tick = (now) => {
-      const elapsed = now - start;
-      const progress = Math.min(elapsed / duration, 1);
-      // Ease out cubic
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setValue(Math.round(eased * target));
-      if (progress < 1) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [target, duration]);
+    timeout = setTimeout(() => {
+      const start = performance.now();
+      const tick = (now) => {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        setValue(Math.round(eased * target));
+        if (progress < 1) raf = requestAnimationFrame(tick);
+      };
+      raf = requestAnimationFrame(tick);
+    }, delay);
+    return () => { clearTimeout(timeout); cancelAnimationFrame(raf); };
+  }, [target, duration, delay]);
   return value;
 }
 
@@ -70,24 +72,50 @@ function SlideWrapper({ children }) {
   );
 }
 
-// Slide 1: Percentage reveal
-function PercentageSlide({ percentage, chemistry_label, chemistry_color }) {
+// Slide 1: Percentage reveal with confetti celebration
+function PercentageSlide({ percentage, chemistry_label, chemistry_color, nameA, nameB, matchCount, totalFeatures }) {
   const animatedPct = useAnimatedNumber(percentage);
+  const [glowActive, setGlowActive] = useState(false);
+
+  useEffect(() => {
+    // Trigger glow + confetti after count-up completes (~2.4s = 600ms delay + 1800ms animation)
+    const timer = setTimeout(() => {
+      setGlowActive(true);
+      if (percentage >= 75) {
+        import('canvas-confetti').then(({ default: confetti }) => {
+          const colors = ['#0a84ff', '#5e5ce6', '#ec4899', '#a78bfa', '#fbbf24'];
+          const count = percentage >= 90 ? 80 : 40;
+          confetti({ particleCount: count, spread: 80, origin: { y: 0.3 }, colors, disableForReducedMotion: true });
+          if (percentage >= 90) {
+            setTimeout(() => confetti({ particleCount: 50, spread: 100, origin: { y: 0.4 }, colors, disableForReducedMotion: true }), 1500);
+          }
+        });
+      }
+    }, 2400);
+    return () => clearTimeout(timer);
+  }, [percentage]);
 
   return (
     <SlideWrapper>
       <motion.div
         initial={{ scale: 0.5, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        transition={{ type: 'spring', stiffness: 200, damping: 15 }}
+        transition={{ type: 'spring', stiffness: 120, damping: 12 }}
         className="text-center"
       >
+        <div className="text-sm text-white/60 mb-3">
+          {nameA} & {nameB}
+        </div>
         <div
-          className="text-7xl font-black tracking-tighter mb-2"
+          className="font-black tracking-tighter mb-2"
           style={{
+            fontSize: 72,
+            lineHeight: 1,
             background: 'linear-gradient(145deg, #0a84ff, #5e5ce6)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
+            transition: 'filter 0.6s ease',
+            filter: glowActive ? `drop-shadow(0 0 30px ${chemistry_color || '#5e5ce6'}60)` : 'none',
           }}
         >
           {animatedPct}%
@@ -101,6 +129,9 @@ function PercentageSlide({ percentage, chemistry_label, chemistry_color }) {
           }}
         >
           {chemistry_label}
+        </div>
+        <div className="text-xs text-white/30 mt-3">
+          {matchCount} of {totalFeatures} features match
         </div>
       </motion.div>
     </SlideWrapper>
@@ -323,6 +354,10 @@ export default function ResultsStory({ results, nameA, onReset }) {
       percentage={percentage}
       chemistry_label={chemistry_label}
       chemistry_color={chemistry_color}
+      nameA={displayA}
+      nameB={displayB}
+      matchCount={(feature_comparisons || []).filter(fc => fc.match).length}
+      totalFeatures={(feature_comparisons || []).length || 8}
     />,
     <StrongestMatchSlide key="match" feature={strongestMatch} nameA={displayA} nameB={displayB} />,
     <BiggestContrastSlide key="contrast" feature={biggestContrast} nameA={displayA} nameB={displayB} />,

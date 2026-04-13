@@ -2,11 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMatchHistory } from '../hooks/useMatchHistory';
 import ShareCard from '../components/ShareCard';
-import { reversePortalTransition } from '../utils/portalTransition';
-
-const BRAND_HUB_URL = import.meta.env.VITE_BRAND_HUB_URL || 'http://localhost:5173';
 const FAMILIMATCH_GRADIENT = 'linear-gradient(145deg, #0a84ff 0%, #5e5ce6 100%)';
-import { ArrowLeft, Zap, Camera, Lock, ChevronLeft } from 'lucide-react';
+import { ArrowLeft, Zap, Camera, Lock } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useConsent } from '../state/ConsentContext';
 import { useMatch } from '../state/MatchContext';
@@ -99,7 +96,7 @@ export default function SoloPage() {
         className="min-h-screen flex flex-col items-center px-4 py-8 relative"
         style={{ background: 'linear-gradient(180deg, #0A0A0F 0%, #0D0820 60%, #0A0A0F 100%)' }}
       >
-        {/* Branded header bar */}
+        {/* Branded header */}
         <header
           style={{
             position: 'sticky', top: 0, zIndex: 20, width: '100%',
@@ -110,15 +107,7 @@ export default function SoloPage() {
             marginBottom: '24px',
           }}
         >
-          <button
-            onClick={() => reversePortalTransition(FAMILIMATCH_GRADIENT, () => { window.location.href = BRAND_HUB_URL; })}
-            style={{
-              display: 'flex', alignItems: 'center', gap: '8px',
-              background: 'none', border: 'none', cursor: 'pointer',
-              color: '#ffffff', padding: 0, minHeight: '44px',
-            }}
-          >
-            <ChevronLeft size={20} color="rgba(255,255,255,0.6)" />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <div
               style={{
                 width: '36px', height: '36px', borderRadius: '12px',
@@ -129,10 +118,10 @@ export default function SoloPage() {
             >
               ✨
             </div>
-            <div style={{ fontSize: '18px', fontWeight: 600, letterSpacing: '-0.3px' }}>
+            <div style={{ fontSize: '18px', fontWeight: 600, letterSpacing: '-0.3px', color: '#ffffff' }}>
               FamiliMatch
             </div>
-          </button>
+          </div>
           <button
             onClick={() => navigate('/')}
             className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors min-h-[44px] min-w-[44px] px-3 py-2"
@@ -283,7 +272,7 @@ export default function SoloPage() {
                       cursor: 'pointer', minHeight: 44,
                     }}
                   >
-                    Share Result
+                    Share Your Score
                   </button>
                 </div>
               </motion.div>

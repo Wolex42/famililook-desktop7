@@ -273,7 +273,7 @@ export default function ResultsPage() {
             }}
           >
             <Share2 size={16} />
-            Share Result
+            Share Your Score
           </button>
         </div>
       </div>

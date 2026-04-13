@@ -5,6 +5,85 @@ Format: Description / Context / Action (D/C/A)
 
 ---
 
+## 2026-04-13 — Phase A2: Viral unlock — result reveal + share card (CR-MATCH-A2)
+
+**Risk Tier**: P1 (growth feature)
+**Approved by**: CEO (Visual Director spec approved with 3 additions)
+**Executed by**: FE Lead agent | **Verified by**: QA Lead agent
+
+| Date | Repo | Type | Description | Ref | Tier | Status |
+|------|------|------|-------------|-----|------|--------|
+| 2026-04-13 | desktop6 | Dep | Added canvas-confetti@^1.9.3 (4KB gzipped, lazy loaded) | CR-MATCH-A2-01 | P1 | CLOSED |
+| 2026-04-13 | desktop6 | Code | Enhanced PercentageSlide: slower spring (120/12), 600ms delay, 72px text, glow pulse, names + feature count display | CR-MATCH-A2-02 | P1 | CLOSED |
+| 2026-04-13 | desktop6 | Code | Confetti celebration: >= 75% light burst (40 particles), >= 90% full celebration (80 + second burst) | CR-MATCH-A2-03 | P1 | CLOSED |
+| 2026-04-13 | desktop6 | Code | ShareCard.jsx full rewrite: 9:16 format (1080x1920), SVG person icon fallback, familimatch.com/?ref=share URL | CR-MATCH-A2-04 | P1 | CLOSED |
+| 2026-04-13 | desktop6 | Code | Share flow: navigator.share() with Blob image, clipboard copy fallback on desktop, download final fallback | CR-MATCH-A2-05 | P1 | CLOSED |
+| 2026-04-13 | desktop6 | Code | SoloPage header: removed back-to-hub portal transition, clean branded header with Back to landing | CR-MATCH-A2-06 | P1 | CLOSED |
+| 2026-04-13 | desktop6 | Code | Share CTA copy changed to "Share Your Score" across Solo + Duo results | CR-MATCH-A2-07 | P1 | CLOSED |
+
+**Tests**: 51/51 passed, build succeeded. Quality floor maintained.
+**CEO additions implemented**: (1) Person SVG fallback for missing names (2) ?ref=share tracking URL (3) Blob-based navigator.share()
+
+---
+
+## 2026-04-13 — Phase A1: Fix broken FamiliMatch product (CR-MATCH-A1)
+
+**Risk Tier**: P1 (product growth blocker)
+**Approved by**: CEO
+**Executed by**: FE Lead agent | **Verified by**: QA Lead agent
+
+| Date | Repo | Type | Description | Ref | Tier | Status |
+|------|------|------|-------------|-----|------|--------|
+| 2026-04-13 | desktop6 | Code | A1.1: Removed back button from landing page header — FamiliMatch is standalone, not a sub-product | CR-MATCH-A1-01 | P1 | CLOSED |
+| 2026-04-13 | desktop6 | Code | A1.2: Fixed upgrade flow — Duo/Group upgrade now opens famililook.com/plans in new tab instead of navigating away | CR-MATCH-A1-02 | P1 | CLOSED |
+| 2026-04-13 | desktop6 | Code | A1.3: Removed fabricated "Thousands of comparisons made" counter — no fake social proof | CR-MATCH-A1-03 | P1 | CLOSED |
+| 2026-04-13 | desktop3 | Code | A1.4: Added familimatch.com + www.familimatch.com to CORS allowed origins | CR-MATCH-A1-04 | P1 | CLOSED |
+| 2026-04-13 | desktop7 | Code | A1.4: Added familimatch.com + www.familimatch.com + Vercel URL to CORS defaults | CR-MATCH-A1-04 | P1 | CLOSED |
+
+**Tests**: 51/51 passed, build succeeded. Quality floor maintained.
+**Removed unused imports**: `reversePortalTransition`, `ChevronLeft`, `useComparisonCount`
+
+---
+
+## 2026-04-14 — Sprint D2: Wire AppErrorBus from famililook-shared (CR-ERRORBUS-D6-01)
+
+**Description:** Wired AppErrorBus from famililook-shared into desktop6. Created re-export shim at `src/infrastructure/AppErrorBus.js`. Copied ErrorToast component and mounted in App.jsx. Migrated `useMatchHistory.addEntry` quota failure to `reportError()` (user now sees toast instead of silent data loss). 16 remaining catches are legitimate graceful degradation — annotated with `eslint-disable-line no-empty` comments for future ESLint enforcement.
+
+**Files added:** `src/infrastructure/AppErrorBus.js`, `src/components/ui/ErrorToast.jsx`
+**Files modified:** `src/App.jsx`, `src/api/matchClient.js`, `src/utils/analytics.js`, `src/hooks/useMatchHistory.js`, `src/hooks/useMatchConnection.js`, `src/state/ConsentContext.jsx`, `src/state/MatchContext.jsx`, `src/pages/LandingPage.jsx`
+**Cross-repo impact:** None — consuming shared package, no changes to shared package.
+**Deferred:** AppStorage migration — requires Platform Architect key schema design for multi-product support.
+**Tests:** 51 unit + 14 E2E PASS, build PASS
+**Status:** COMPLETE
+
+---
+
+## 2026-04-14 — Sprint D1: Playwright E2E setup (CR-E2E-D6-01)
+
+**Description:** Installed Playwright with Chromium. Created `playwright.config.js` (port 5174, iPhone 14 Pro viewport, strictPort). Added `test:e2e` script. Created `e2e/solo-flow.spec.js` with 14 E2E tests covering:
+- Landing page (hero, mode cards, tier gating, upgrade modal, privacy/terms links)
+- Solo flow navigation (consent gate, upload UI, compare button state, back button with onboarding dismissal)
+- Privacy note visibility
+- Direct URL navigation (/solo, /privacy, /terms, unknown routes)
+
+**Files added:** `playwright.config.js`, `e2e/solo-flow.spec.js`
+**Files modified:** `package.json` (added @playwright/test + test:e2e script)
+**Tests:** 51 unit tests + 14 E2E tests PASS, build PASS
+**Status:** COMPLETE
+
+---
+
+## 2026-04-14 — Wire @famililook/shared dependency (CR-SHARED-WIRE-D6)
+
+**Description:** Added `@famililook/shared: file:../famililook-shared` to dependencies. npm creates symlink at node_modules/@famililook/shared → ../../famililook-shared. No source code changes — desktop6 is not yet consuming any shared modules in its source.
+**Context:** Session A2. Part of Sprint A (Shared Package Completion). Desktop6 is now wired alongside desktop2 and desktop4.
+**Cross-repo impact:** None — dependency wiring only, no behaviour change.
+**Tests:** 51 passing, build PASS.
+**Commit:** 49e78f6
+**Status:** COMPLETE
+
+---
+
 ## 2026-03-31 | Sprint 0A — FamiliMatch Source Restoration (Pending)
 
 **Description**: Full source restoration of FamiliMatch FE — 15 files spanning config, state, components, and utilities. Partial rewrite to rebuild the FamiliMatch experience from desktop6 skeleton.
