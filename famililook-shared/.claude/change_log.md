@@ -1,5 +1,16 @@
 # Change Log — famililook-shared
 
+## 2026-04-14 — Standalone vitest config + consumer wiring (CR-SHARED-04)
+
+### CR-SHARED-04 — vitest.config.js + test scripts + desktop4/desktop6 wired
+**Description:** Added vitest.config.js (jsdom environment, tests/**/*.test.js include pattern) and "test"/"test:run" scripts to package.json. Desktop4 and desktop6 now have `@famililook/shared: file:../famililook-shared` in dependencies with verified symlinks.
+**Context:** Session A2. All 3 consumers (desktop2, desktop4, desktop6) now wired to the shared package. 88 tests pass standalone.
+**Cross-repo impact:** desktop4 (commit f9eed1a) and desktop6 (commit 49e78f6) — package.json + package-lock.json updated. All tests + builds pass in both repos.
+**Risk Tier:** P3 (Routine — no source code changes, dependency wiring only)
+**Status:** COMPLETE
+
+---
+
 ## 2026-04-14 — resultsContract extraction (CR-SHARED-03)
 
 ### CR-SHARED-03 — resultsContract extraction to famililook-shared

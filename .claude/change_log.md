@@ -4,6 +4,20 @@ All changes must be logged here with validation status.
 
 ---
 
+## 2026-04-14 — Session A2: Wire desktop4/desktop6 + shared package vitest config
+
+**Files changed:**
+- `famililook-desktop4/package.json` + `package-lock.json` — Added `@famililook/shared: file:../famililook-shared` dependency (commit f9eed1a)
+- `famililook-desktop6/package.json` + `package-lock.json` — Added `@famililook/shared: file:../famililook-shared` dependency (commit 49e78f6)
+- `famililook-shared/vitest.config.js` — NEW: standalone vitest config (jsdom, tests/**/*.test.js)
+- `famililook-shared/package.json` — Added test/test:run scripts
+- `.gitignore` — Added famililook-shared/node_modules/, famililook-shared/package-lock.json, famililook-game-engine/node_modules/
+
+**Validation:** All quality floors held — desktop2: 1,444, desktop4: 932, desktop6: 51, shared: 88. All builds PASS. All symlinks resolve.
+**Cross-repo impact:** All 3 consumers (desktop2, desktop4, desktop6) now wired to famililook-shared. No source code changes — dependency wiring only.
+
+---
+
 ## 2026-04-01 — Phase 2: Gate KeepsakesModal — mobile flow on phones, desktop modal on larger screens
 
 **Files changed:**
