@@ -11,6 +11,7 @@ from pydantic import BaseModel
 class ClientMessageType(str, Enum):
     CREATE_ROOM = "create_room"
     JOIN_ROOM = "join_room"
+    REJOIN_ROOM = "rejoin_room"
     GRANT_CONSENT = "grant_consent"
     UPLOAD_PHOTO = "upload_photo"
     READY = "ready"
@@ -22,6 +23,8 @@ class ServerMessageType(str, Enum):
     ROOM_CREATED = "room_created"
     PLAYER_JOINED = "player_joined"
     PLAYER_LEFT = "player_left"
+    PLAYER_RECONNECTED = "player_reconnected"
+    REJOIN_SUCCESS = "rejoin_success"
     CONSENT_REQUIRED = "consent_required"
     CONSENT_GRANTED = "consent_granted"
     PHOTO_RECEIVED = "photo_received"

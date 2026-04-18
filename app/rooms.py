@@ -24,13 +24,15 @@ MAX_PLAYERS_BY_TYPE = {
 
 class Player:
     """A connected player in a match room."""
-    __slots__ = ("id", "name", "ws", "connected_at")
+    __slots__ = ("id", "name", "ws", "connection_id", "connected_at", "disconnected_at")
 
-    def __init__(self, id: str, name: str, ws: WebSocket):
+    def __init__(self, id: str, name: str, ws: WebSocket, connection_id: str = ""):
         self.id = id
         self.name = name
         self.ws = ws
+        self.connection_id = connection_id or f"conn_{secrets.token_hex(4)}"
         self.connected_at = time.time()
+        self.disconnected_at: float | None = None
 
 
 class MatchRoom:
@@ -39,12 +41,15 @@ class MatchRoom:
     Photos are stored as raw bytes — never written to disk.
     """
 
+    DISCONNECT_TIMEOUT = 300  # 5 minutes — grace period for reconnection
+
     def __init__(self, code: str, host_id: str, room_type: RoomType):
         self.code = code
         self.host_id = host_id
         self.room_type = room_type
         self.max_players = MAX_PLAYERS_BY_TYPE.get(room_type, 2)
         self.players: Dict[str, Player] = {}
+        self._disconnected: Dict[str, Player] = {}  # player_id -> Player (grace period)
         self.consents: Dict[str, bool] = {}
         self.photos: Dict[str, bytes] = {}  # player_id -> raw photo bytes (RAM only)
         self.ready_players: set = set()
@@ -58,7 +63,7 @@ class MatchRoom:
 
     @property
     def is_full(self) -> bool:
-        return self.player_count >= self.max_players
+        return (self.player_count + len(self._disconnected)) >= self.max_players
 
     @property
     def all_consented(self) -> bool:
@@ -78,21 +83,67 @@ class MatchRoom:
 
     def add_player(self, player: Player):
         """Add a player. Raises ValueError if room is full or player already in."""
-        if self.is_full:
+        # Allow reconnecting players (they are in _disconnected, not players)
+        if player.id not in self._disconnected and self.is_full:
             raise ValueError("Room is full")
         if player.id in self.players:
             raise ValueError("Already in room")
         self.players[player.id] = player
         self.last_activity = time.time()
 
+    def disconnect_player(self, player_id: str):
+        """Mark a player as disconnected but keep their data (photos, consent) intact.
+
+        The player is moved from active players to the _disconnected dict.
+        After DISCONNECT_TIMEOUT (5 min), _cleanup_disconnected removes them fully.
+        """
+        player = self.players.pop(player_id, None)
+        if player:
+            player.disconnected_at = time.time()
+            self._disconnected[player_id] = player
+        self.last_activity = time.time()
+
+    def rejoin_player(self, player_id: str, new_ws: 'WebSocket', new_connection_id: str) -> Optional[Player]:
+        """Rejoin a disconnected player with a new WebSocket connection.
+
+        Returns the restored Player on success, None if the player is not
+        in the disconnected set.
+        """
+        player = self._disconnected.pop(player_id, None)
+        if not player:
+            return None
+        player.ws = new_ws
+        player.connection_id = new_connection_id
+        player.disconnected_at = None
+        self.players[player_id] = player
+        self.last_activity = time.time()
+        return player
+
+    def cleanup_disconnected(self):
+        """Remove players who have been disconnected longer than DISCONNECT_TIMEOUT.
+
+        Also removes their photos, consent, and ready state.
+        """
+        now = time.time()
+        expired = [
+            pid for pid, p in self._disconnected.items()
+            if p.disconnected_at and (now - p.disconnected_at) > self.DISCONNECT_TIMEOUT
+        ]
+        for pid in expired:
+            self._disconnected.pop(pid, None)
+            self.consents.pop(pid, None)
+            self.photos.pop(pid, None)
+            self.ready_players.discard(pid)
+
     def remove_player(self, player_id: str) -> bool:
-        """Remove a player and their data. Returns True if room is now empty."""
+        """Remove a player and their data completely (explicit leave). Returns True if room is now empty."""
         self.players.pop(player_id, None)
+        self._disconnected.pop(player_id, None)
         self.consents.pop(player_id, None)
         self.photos.pop(player_id, None)
         self.ready_players.discard(player_id)
         self.last_activity = time.time()
-        return len(self.players) == 0
+        return len(self.players) == 0 and len(self._disconnected) == 0
 
     def record_consent(self, player_id: str):
         """Record that a player has consented to photo processing."""
@@ -129,6 +180,7 @@ class MatchRoom:
         self.results = None
         self.ready_players.clear()
         self.consents.clear()
+        self._disconnected.clear()
         gc.collect()
 
     async def broadcast(self, message: dict, exclude: Optional[str] = None):
@@ -171,10 +223,14 @@ class RoomManager:
             self._cleanup_task = asyncio.create_task(self._cleanup_loop())
 
     async def _cleanup_loop(self):
-        """Periodically remove idle rooms, clearing all photo data."""
+        """Periodically remove idle rooms and expired disconnected players."""
         while True:
             await asyncio.sleep(60)
             now = time.time()
+            # Clean up disconnected players whose grace period has expired
+            for room in self._rooms.values():
+                room.cleanup_disconnected()
+            # Remove idle rooms
             expired = [
                 code for code, room in self._rooms.items()
                 if now - room.last_activity > self.idle_timeout
@@ -217,6 +273,16 @@ class RoomManager:
     def get_room(self, code: str) -> Optional[MatchRoom]:
         """Look up a room by code."""
         return self._rooms.get(code)
+
+    def rejoin_player(self, room_code: str, player_id: str, new_ws: 'WebSocket', new_connection_id: str) -> Optional[Player]:
+        """Rejoin a disconnected player to their room.
+
+        Returns the restored Player on success, None if room or player not found.
+        """
+        room = self.get_room(room_code)
+        if not room:
+            return None
+        return room.rejoin_player(player_id, new_ws, new_connection_id)
 
     def remove_room(self, code: str):
         """Remove a room, clearing all its data first."""
